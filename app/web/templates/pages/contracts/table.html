@@ -1,0 +1,55 @@
+<table class="w-full">
+    <thead class="bg-gray-50 border-b">
+        <tr>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vehículo</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Chofer</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Inicio</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Km Inicio</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Monto semanal</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Depósito</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
+            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+        </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200">
+        {% for contract in contracts %}
+        <tr class="hover:bg-gray-50">
+            <td class="px-4 py-4 font-medium text-gray-900">{{ contract.vehicle_plate }}</td>
+            <td class="px-4 py-4 text-gray-700">{{ contract.driver_name }}</td>
+            <td class="px-4 py-4 text-gray-700">{{ contract.start_date }}</td>
+            <td class="px-4 py-4 text-gray-700">{{ contract.start_km }}</td>
+            <td class="px-4 py-4 text-gray-700">${{ contract.weekly_amount }}</td>
+            <td class="px-4 py-4 text-gray-700">${{ contract.deposit_amount or 0 }}</td>
+            <td class="px-4 py-4">
+                {% if contract.status == 'activo' %}
+                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">Activo</span>
+                {% else %}
+                <span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-700">Finalizado</span>
+                {% endif %}
+            </td>
+            <td class="px-4 py-4">
+                <button hx-get="/contracts/{{ contract.id }}/edit"
+                        hx-target="#main-content"
+                        hx-swap="innerHTML"
+                        class="text-blue-500 hover:text-blue-700 mr-3">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button hx-delete="/contracts/{{ contract.id }}"
+                        hx-target="#contracts-table-container"
+                        hx-swap="innerHTML"
+                        hx-confirm="¿Eliminar este contrato?"
+                        class="text-red-500 hover:text-red-700">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="8" class="px-6 py-8 text-center text-gray-400">
+                <i class="fas fa-file-contract text-4xl mb-2"></i>
+                <p>No hay contratos registrados</p>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

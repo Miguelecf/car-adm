@@ -1,0 +1,75 @@
+<div id="main-content">
+    <div class="mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Nuevo Registro de Mantenimiento</h2>
+    </div>
+
+    <form hx-post="{{ action }}"
+          hx-target="#maintenance-table-container"
+          hx-swap="innerHTML"
+          class="bg-white rounded-xl shadow p-6 max-w-2xl">
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Vehículo *</label>
+                <select name="vehicle_id" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <option value="">Seleccionar...</option>
+                    {% for v in vehicles %}
+                    <option value="{{ v.id }}">{{ v.plate }} - {{ v.brand }} {{ v.model }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Tipo *</label>
+                <select name="type" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <option value="">Seleccionar...</option>
+                    <option value="aceite">Cambio de aceite</option>
+                    <option value="filtros">Filtros</option>
+                    <option value="frenos">Frenos</option>
+                    <option value="llantas">Llantas</option>
+                    <option value="correa">Correa</option>
+                    <option value="otro">Otro</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Fecha del servicio *</label>
+                <input type="date" name="service_date" required
+                       class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Km al servicio *</label>
+                <input type="number" name="km_at_service" required
+                       class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Costo</label>
+                <input type="number" name="cost" value="0"
+                       class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Próximo km</label>
+                <input type="number" name="next_service_km"
+                       class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                       placeholder="Ej: 150000">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Próxima fecha</label>
+                <input type="date" name="next_service_date"
+                       class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            </div>
+            <div class="col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+                <textarea name="description" rows="2"
+                          class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+            </div>
+        </div>
+
+        <div class="flex justify-end gap-3 mt-6">
+            <button type="button" hx-get="/maintenance" hx-target="#main-content" hx-swap="innerHTML"
+                    class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition">
+                Cancelar
+            </button>
+            <button type="submit" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition">
+                Guardar
+            </button>
+        </div>
+    </form>
+</div>

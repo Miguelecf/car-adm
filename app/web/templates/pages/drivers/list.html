@@ -1,0 +1,26 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Choferes - {{ settings.APP_NAME }}{% endblock %}
+
+{% block content %}
+<div id="main-content">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h2 class="text-3xl font-bold text-gray-800">Choferes</h2>
+            <p class="text-gray-500">Gestiona los choferes de tu flota</p>
+        </div>
+        <button hx-get="/drivers/new"
+                hx-target="#main-content"
+                hx-swap="innerHTML"
+                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition">
+            <i class="fas fa-plus mr-2"></i>Nuevo chofer
+        </button>
+    </div>
+
+    <div class="bg-white rounded-xl shadow">
+        <div id="drivers-table-container">
+            {% include "pages/drivers/table.html" %}
+        </div>
+    </div>
+</div>
+{% endblock %}

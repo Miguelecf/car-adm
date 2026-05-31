@@ -1,0 +1,55 @@
+<table class="w-full">
+    <thead class="bg-gray-50 border-b">
+        <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">DNI</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Teléfono</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Licencia</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Venc. Licencia</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+        </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200">
+        {% for driver in drivers %}
+        <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 font-medium text-gray-900">{{ driver.name }}</td>
+            <td class="px-6 py-4 text-gray-700">{{ driver.dni }}</td>
+            <td class="px-6 py-4 text-gray-700">{{ driver.phone or '-' }}</td>
+            <td class="px-6 py-4 text-gray-700">{{ driver.license_number or '-' }}</td>
+            <td class="px-6 py-4">
+                {% if driver.license_expiry %}
+                    {% if driver.license_expiry < settings.TODAY %}
+                    <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700">Vencida</span>
+                    {% else %}
+                    <span class="text-gray-700">{{ driver.license_expiry }}</span>
+                    {% endif %}
+                {% else %}
+                <span class="text-gray-400">-</span>
+                {% endif %}
+            </td>
+            <td class="px-6 py-4">
+                <button hx-get="/drivers/{{ driver.id }}/edit"
+                        hx-target="#main-content"
+                        hx-swap="innerHTML"
+                        class="text-blue-500 hover:text-blue-700 mr-3">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button hx-delete="/drivers/{{ driver.id }}"
+                        hx-target="#drivers-table-container"
+                        hx-swap="innerHTML"
+                        hx-confirm="¿Eliminar este chofer?"
+                        class="text-red-500 hover:text-red-700">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6" class="px-6 py-8 text-center text-gray-400">
+                <i class="fas fa-users text-4xl mb-2"></i>
+                <p>No hay choferes registrados</p>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

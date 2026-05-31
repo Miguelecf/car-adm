@@ -1,0 +1,55 @@
+<table class="w-full">
+    <thead class="bg-gray-50 border-b">
+        <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Matrícula</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Marca/Modelo</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Año</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Color</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Km</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+        </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200">
+        {% for vehicle in vehicles %}
+        <tr class="hover:bg-gray-50">
+            <td class="px-6 py-4 font-medium text-gray-900">{{ vehicle.plate }}</td>
+            <td class="px-6 py-4 text-gray-700">{{ vehicle.brand }} {{ vehicle.model }}</td>
+            <td class="px-6 py-4 text-gray-700">{{ vehicle.year }}</td>
+            <td class="px-6 py-4 text-gray-700">{{ vehicle.color or '-' }}</td>
+            <td class="px-6 py-4 text-gray-700">{{ vehicle.current_km|default(0) }}</td>
+            <td class="px-6 py-4">
+                {% if vehicle.status == 'activo' %}
+                <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">Activo</span>
+                {% elif vehicle.status == 'en_taller' %}
+                <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-700">En taller</span>
+                {% else %}
+                <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700">Fuera de servicio</span>
+                {% endif %}
+            </td>
+            <td class="px-6 py-4">
+                <button hx-get="/vehicles/{{ vehicle.id }}/edit"
+                        hx-target="#main-content"
+                        hx-swap="innerHTML"
+                        class="text-blue-500 hover:text-blue-700 mr-3">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button hx-delete="/vehicles/{{ vehicle.id }}"
+                        hx-target="#vehicles-table-container"
+                        hx-swap="innerHTML"
+                        hx-confirm="¿Eliminar este vehículo?"
+                        class="text-red-500 hover:text-red-700">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="7" class="px-6 py-8 text-center text-gray-400">
+                <i class="fas fa-car text-4xl mb-2"></i>
+                <p>No hay vehículos registrados</p>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
