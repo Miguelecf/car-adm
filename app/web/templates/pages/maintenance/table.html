@@ -1,47 +1,55 @@
 <table class="w-full">
-    <thead class="bg-gray-50 border-b">
+    <thead class="bg-[#1C1C1C] border-b border-[#262626]">
         <tr>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Vehículo</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tipo</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Km</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Costo</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Próximo</th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Auto</th>
+            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Tipo</th>
+            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Fecha</th>
+            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Km</th>
+            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Costo</th>
+            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Próximo</th>
+            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Acciones</th>
         </tr>
     </thead>
-    <tbody class="divide-y divide-gray-200">
+    <tbody class="divide-y divide-[#262626]">
         {% for m in maintenances %}
-        <tr class="hover:bg-gray-50">
-            <td class="px-4 py-4 font-medium text-gray-900">{{ m.vehicle_plate }}</td>
-            <td class="px-4 py-4 text-gray-700">{{ m.type }}</td>
-            <td class="px-4 py-4 text-gray-700">{{ m.service_date }}</td>
-            <td class="px-4 py-4 text-gray-700">{{ m.km_at_service }}</td>
-            <td class="px-4 py-4 text-gray-700">${{ m.cost or 0 }}</td>
-            <td class="px-4 py-4 text-gray-700">
+        <tr class="hover:bg-[#1C1C1C] transition-colors duration-150">
+            <td class="px-5 py-4 text-lg font-bold text-[#F5F0EB]">{{ m.vehicle_plate }}</td>
+            <td class="px-5 py-4 text-lg text-[#989898]">{{ m.type }}</td>
+            <td class="px-5 py-4 text-lg text-[#989898]">{{ m.service_date }}</td>
+            <td class="px-5 py-4 text-lg text-[#989898]">{{ m.km_at_service }}</td>
+            <td class="px-5 py-4 text-lg text-[#989898]">${{ m.cost or 0 }}</td>
+            <td class="px-5 py-4 text-lg text-[#989898]">
                 {% if m.next_service_date %}
                     {{ m.next_service_date }}
                 {% elif m.next_service_km %}
                     {{ m.next_service_km }} km
                 {% else %}
-                    -
+                    <span class="text-[#5C5C5C]">-</span>
                 {% endif %}
             </td>
-            <td class="px-4 py-4">
+            <td class="px-5 py-4">
                 <button hx-delete="/maintenance/{{ m.id }}"
                         hx-target="#maintenance-table-container"
                         hx-swap="innerHTML"
                         hx-confirm="¿Eliminar este registro?"
-                        class="text-red-500 hover:text-red-700">
+                        class="text-[#989898] hover:text-[#EF4444] transition-colors duration-150 text-xl"
+                        title="Eliminar">
                     <i class="fas fa-trash"></i>
                 </button>
             </td>
         </tr>
         {% else %}
         <tr>
-            <td colspan="7" class="px-6 py-8 text-center text-gray-400">
-                <i class="fas fa-wrench text-4xl mb-2"></i>
-                <p>No hay registros de mantenimiento</p>
+            <td colspan="7" class="px-6 py-12 text-center">
+                <span class="text-5xl mb-3 block">🔧</span>
+                <p class="text-xl text-[#5C5C5C]">No hay registros de servicio</p>
+                <button hx-get="/maintenance/new"
+                        hx-target="#main-content"
+                        hx-swap="innerHTML"
+                        hx-select="#main-content"
+                        class="mt-4 text-[#F5A623] hover:text-[#E0950A] text-lg font-medium transition-colors duration-150">
+                    Agregar el primero →
+                </button>
             </td>
         </tr>
         {% endfor %}

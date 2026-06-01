@@ -1,148 +1,138 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}Dashboard - {{ settings.APP_NAME }}{% endblock %}
+{% block title %}Inicio — {{ settings.APP_NAME }}{% endblock %}
 
 {% block content %}
-<div id="main-content">
-    <div class="mb-6">
-        <h2 class="text-3xl font-bold text-gray-800">Dashboard</h2>
-        <p class="text-gray-500">Resumen de tu flota de taxis</p>
+<div id="main-content" data-current-path="{{ current_path }}">
+
+    <div class="mb-10">
+        <h2 class="text-4xl font-bold tracking-tight text-[#F5F0EB]">Inicio</h2>
+        <p class="text-lg text-[#989898] mt-2">Resumen general de tu flota</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white rounded-xl shadow p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-500 text-sm">Vehículos activos</p>
-                    <p class="text-3xl font-bold text-gray-800">{{ stats.vehicles.active }} / {{ stats.vehicles.total }}</p>
-                </div>
-                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-car text-blue-500 text-xl"></i>
-                </div>
+    <!-- ── Tarjetas KPI ── -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+        <div class="bg-[#141414] border border-[#262626] rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-5xl">🚕</span>
             </div>
-            <p class="text-xs text-gray-400 mt-2">
+            <p class="text-4xl font-bold text-[#F5F0EB]">{{ stats.vehicles.active }}<span class="text-2xl text-[#5C5C5C]">/{{ stats.vehicles.total }}</span></p>
+            <p class="text-lg text-[#989898] mt-2">Autos activos</p>
+            {% if stats.vehicles.in_repair or stats.vehicles.out_of_service %}
+            <p class="text-sm text-[#5C5C5C] mt-1">
                 {{ stats.vehicles.in_repair }} en taller · {{ stats.vehicles.out_of_service }} fuera de servicio
             </p>
+            {% endif %}
         </div>
 
-        <div class="bg-white rounded-xl shadow p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-500 text-sm">Contratos activos</p>
-                    <p class="text-3xl font-bold text-gray-800">{{ stats.contracts.active }}</p>
-                </div>
-                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-file-contract text-green-500 text-xl"></i>
-                </div>
+        <div class="bg-[#141414] border border-[#262626] rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-5xl">📋</span>
             </div>
-            <p class="text-xs text-gray-400 mt-2">{{ stats.contracts.total }} contratos en total</p>
+            <p class="text-4xl font-bold text-[#F5F0EB]">{{ stats.contracts.active }}</p>
+            <p class="text-lg text-[#989898] mt-2">Contratos activos</p>
+            <p class="text-sm text-[#5C5C5C] mt-1">{{ stats.contracts.total }} en total</p>
         </div>
 
-        <div class="bg-white rounded-xl shadow p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-500 text-sm">Ingresos esta semana</p>
-                    <p class="text-3xl font-bold text-gray-800">${{ stats.weekly_revenue|default(0) }}</p>
-                </div>
-                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-dollar-sign text-yellow-500 text-xl"></i>
-                </div>
+        <div class="bg-[#141414] border border-[#262626] rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-5xl">💰</span>
             </div>
-            <p class="text-xs text-gray-400 mt-2">
-                {% if stats.pending_amount > 0 %}
-                <span class="text-red-500">{{ stats.pending_amount }} pendientes</span>
-                {% else %}
-                Sin pagos pendientes
-                {% endif %}
-            </p>
+            <p class="text-4xl font-bold text-[#F5F0EB]">${{ stats.weekly_revenue|default(0) }}</p>
+            <p class="text-lg text-[#989898] mt-2">Cobrado esta semana</p>
+            {% if stats.pending_amount > 0 %}
+            <p class="text-sm text-[#F5A623] mt-1">Faltan cobrar ${{ stats.pending_amount }}</p>
+            {% else %}
+            <p class="text-sm text-[#22C55E] mt-1">Al día ✓</p>
+            {% endif %}
         </div>
 
-        <div class="bg-white rounded-xl shadow p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-500 text-sm">Alertas</p>
-                    <p class="text-3xl font-bold text-gray-800">{{ stats.alerts.total }}</p>
-                </div>
-                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                    <i class="fas fa-bell text-red-500 text-xl"></i>
-                </div>
+        <div class="bg-[#141414] border {% if stats.alerts.total > 0 %}border-[#F5A623]/30{% else %}border-[#262626]{% endif %} rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <span class="text-5xl">🔔</span>
             </div>
-            <p class="text-xs text-gray-400 mt-2">
-                {{ stats.alerts.documents }} docs · {{ stats.alerts.maintenance }} mant. · {{ stats.alerts.incidents }} incidentes
+            <p class="text-4xl font-bold {% if stats.alerts.total > 0 %}text-[#F5A623]{% else %}text-[#F5F0EB]{% endif %}">{{ stats.alerts.total }}</p>
+            <p class="text-lg text-[#989898] mt-2">Alertas</p>
+            <p class="text-sm text-[#5C5C5C] mt-1">
+                {{ stats.alerts.documents }} docs · {{ stats.alerts.maintenance }} servicio · {{ stats.alerts.incidents }} multas
             </p>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <div class="bg-white rounded-xl shadow p-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">
-                <i class="fas fa-wrench text-orange-400 mr-2"></i>
-                Próximos mantenimientos
+    <!-- ── Alertas y pendientes ── -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-10">
+        <!-- Próximo mantenimiento -->
+        <div class="bg-[#141414] border border-[#262626] rounded-2xl p-6">
+            <h3 class="text-xl font-semibold text-[#F5F0EB] mb-5 flex items-center gap-3">
+                <span class="text-2xl">🔧</span> Próximo servicio
             </h3>
             {% if stats.upcoming_maintenance %}
-            <div class="space-y-3">
+            <div class="space-y-4">
                 {% for m in stats.upcoming_maintenance %}
-                <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                <div class="flex items-center justify-between py-3 border-b border-[#262626] last:border-0">
                     <div>
-                        <p class="font-medium text-gray-700">{{ m.vehicle }}</p>
-                        <p class="text-sm text-gray-500">{{ m.type }} · {{ m.next_date or 'km ' + m.next_km|string }}</p>
+                        <p class="text-lg font-medium text-[#F5F0EB]">{{ m.vehicle }}</p>
+                        <p class="text-base text-[#989898]">{{ m.type }}{% if m.next_date %} — {{ m.next_date }}{% elif m.next_km %} — {{ m.next_km }} km{% endif %}</p>
                     </div>
-                    <span class="px-3 py-1 text-xs rounded-full {% if m.urgent %}bg-red-100 text-red-700{% else %}bg-yellow-100 text-yellow-700{% endif %}">
+                    <span class="px-4 py-1.5 text-base rounded-full font-medium
+                        {% if m.urgent %}bg-[#3B1219] text-[#EF4444]{% else %}bg-[#3D2E0A] text-[#F5A623]{% endif %}">
                         {{ m.days_left }} días
                     </span>
                 </div>
                 {% endfor %}
             </div>
             {% else %}
-            <p class="text-gray-400 text-center py-4">No hay mantenimientos próximos</p>
+            <p class="text-[#5C5C5C] text-lg text-center py-6">Todo al día ✓</p>
             {% endif %}
         </div>
 
-        <div class="bg-white rounded-xl shadow p-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">
-                <i class="fas fa-file-alt text-blue-400 mr-2"></i>
-                Documentos por vencer
+        <!-- Documentos por vencer -->
+        <div class="bg-[#141414] border border-[#262626] rounded-2xl p-6">
+            <h3 class="text-xl font-semibold text-[#F5F0EB] mb-5 flex items-center gap-3">
+                <span class="text-2xl">📄</span> Documentos por vencer
             </h3>
             {% if stats.upcoming_documents %}
-            <div class="space-y-3">
+            <div class="space-y-4">
                 {% for d in stats.upcoming_documents %}
-                <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                <div class="flex items-center justify-between py-3 border-b border-[#262626] last:border-0">
                     <div>
-                        <p class="font-medium text-gray-700">{{ d.vehicle }} - {{ d.type }}</p>
-                        <p class="text-sm text-gray-500">Vence: {{ d.expiry_date }}</p>
+                        <p class="text-lg font-medium text-[#F5F0EB]">{{ d.vehicle }}</p>
+                        <p class="text-base text-[#989898]">{{ d.type }} · Vence {{ d.expiry_date }}</p>
                     </div>
-                    <span class="px-3 py-1 text-xs rounded-full {% if d.urgent %}bg-red-100 text-red-700{% else %}bg-yellow-100 text-yellow-700{% endif %}">
+                    <span class="px-4 py-1.5 text-base rounded-full font-medium
+                        {% if d.urgent %}bg-[#3B1219] text-[#EF4444]{% else %}bg-[#3D2E0A] text-[#F5A623]{% endif %}">
                         {{ d.days_left }} días
                     </span>
                 </div>
                 {% endfor %}
             </div>
             {% else %}
-            <p class="text-gray-400 text-center py-4">No hay documentos por vencer</p>
+            <p class="text-[#5C5C5C] text-lg text-center py-6">Todo al día ✓</p>
             {% endif %}
         </div>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-white rounded-xl shadow p-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">
-                <i class="fas fa-chart-bar text-purple-400 mr-2"></i>
-                Rentabilidad por vehículo
+    <!-- ── Rentabilidad y pagos pendientes ── -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <!-- Rentabilidad -->
+        <div class="bg-[#141414] border border-[#262626] rounded-2xl p-6">
+            <h3 class="text-xl font-semibold text-[#F5F0EB] mb-5 flex items-center gap-3">
+                <span class="text-2xl">📊</span> Ganancia por auto
             </h3>
             {% if stats.profitability %}
-            <div class="space-y-3">
+            <div class="space-y-4">
                 {% for p in stats.profitability %}
-                <div class="py-2 border-b border-gray-100 last:border-0">
-                    <div class="flex justify-between items-center mb-1">
-                        <span class="font-medium text-gray-700">{{ p.vehicle }}</span>
-                        <span class="{% if p.profit >= 0 %}text-green-600{% else %}text-red-600{% endif %} font-semibold">
+                <div class="py-3 border-b border-[#262626] last:border-0">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-lg font-medium text-[#F5F0EB]">{{ p.vehicle }}</span>
+                        <span class="text-lg font-semibold {% if p.profit >= 0 %}text-[#22C55E]{% else %}text-[#EF4444]{% endif %}">
                             ${{ p.profit }}
                         </span>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="bg-purple-500 h-2 rounded-full" style="width: {{ p.bar_width }}%"></div>
+                    <div class="w-full bg-[#262626] rounded-full h-2.5">
+                        <div class="bg-[#F5A623] h-2.5 rounded-full" style="width: {{ p.bar_width }}%"></div>
                     </div>
-                    <div class="flex justify-between text-xs text-gray-400 mt-1">
+                    <div class="flex justify-between text-sm text-[#5C5C5C] mt-2">
                         <span>Ingresos: ${{ p.revenue }}</span>
                         <span>Gastos: ${{ p.expenses }}</span>
                     </div>
@@ -150,31 +140,32 @@
                 {% endfor %}
             </div>
             {% else %}
-            <p class="text-gray-400 text-center py-4">No hay datos de rentabilidad</p>
+            <p class="text-[#5C5C5C] text-lg text-center py-6">Sin datos todavía</p>
             {% endif %}
         </div>
 
-        <div class="bg-white rounded-xl shadow p-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">
-                <i class="fas fa-money-bill-wave text-green-400 mr-2"></i>
-                Pagos pendientes de esta semana
+        <!-- Pagos pendientes -->
+        <div class="bg-[#141414] border border-[#262626] rounded-2xl p-6">
+            <h3 class="text-xl font-semibold text-[#F5F0EB] mb-5 flex items-center gap-3">
+                <span class="text-2xl">💵</span> Cobros pendientes
             </h3>
             {% if stats.pending_payments %}
-            <div class="space-y-3">
+            <div class="space-y-4">
                 {% for p in stats.pending_payments %}
-                <div class="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                <div class="flex items-center justify-between py-3 border-b border-[#262626] last:border-0">
                     <div>
-                        <p class="font-medium text-gray-700">{{ p.driver }}</p>
-                        <p class="text-sm text-gray-500">{{ p.vehicle }} · {{ p.due_date }}</p>
+                        <p class="text-lg font-medium text-[#F5F0EB]">{{ p.driver }}</p>
+                        <p class="text-base text-[#989898]">{{ p.vehicle }} · {{ p.due_date }}</p>
                     </div>
-                    <span class="font-semibold text-gray-800">${{ p.amount }}</span>
+                    <span class="text-xl font-bold text-[#F5F0EB]">${{ p.amount }}</span>
                 </div>
                 {% endfor %}
             </div>
             {% else %}
-            <p class="text-gray-400 text-center py-4">No hay pagos pendientes</p>
+            <p class="text-[#5C5C5C] text-lg text-center py-6">Todo al día ✓</p>
             {% endif %}
         </div>
     </div>
+
 </div>
 {% endblock %}

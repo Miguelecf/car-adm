@@ -27,8 +27,7 @@ def document_to_dict(d: Document) -> dict:
 async def list_documents(request: Request, db: Session = Depends(get_db)):
     service = DocumentService(db)
     documents = service.get_all()
-    return templates.TemplateResponse("pages/documents/list.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/documents/list.html", {
         "documents": [document_to_dict(d) for d in documents],
         "current_path": "/documents",
     })
@@ -37,8 +36,7 @@ async def list_documents(request: Request, db: Session = Depends(get_db)):
 @router.get("/documents/new", response_class=HTMLResponse)
 async def new_document_form(request: Request, db: Session = Depends(get_db)):
     vehicle_service = VehicleService(db)
-    return templates.TemplateResponse("pages/documents/form.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/documents/form.html", {
         "document": None,
         "vehicles": vehicle_service.get_all(),
         "action": "/documents",
@@ -67,8 +65,7 @@ async def create_document(
         "file_notes": file_notes,
     })
     documents = service.get_all()
-    return templates.TemplateResponse("pages/documents/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/documents/table.html", {
         "documents": [document_to_dict(d) for d in documents],
     })
 
@@ -78,7 +75,6 @@ async def delete_document(request: Request, document_id: int, db: Session = Depe
     service = DocumentService(db)
     service.delete(document_id)
     documents = service.get_all()
-    return templates.TemplateResponse("pages/documents/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/documents/table.html", {
         "documents": [document_to_dict(d) for d in documents],
     })

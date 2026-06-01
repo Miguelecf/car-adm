@@ -30,8 +30,7 @@ def maintenance_to_dict(m: Maintenance) -> dict:
 async def list_maintenance(request: Request, db: Session = Depends(get_db)):
     service = MaintenanceService(db)
     records = service.get_all()
-    return templates.TemplateResponse("pages/maintenance/list.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/maintenance/list.html", {
         "maintenances": [maintenance_to_dict(m) for m in records],
         "current_path": "/maintenance",
     })
@@ -40,8 +39,7 @@ async def list_maintenance(request: Request, db: Session = Depends(get_db)):
 @router.get("/maintenance/new", response_class=HTMLResponse)
 async def new_maintenance_form(request: Request, db: Session = Depends(get_db)):
     vehicle_service = VehicleService(db)
-    return templates.TemplateResponse("pages/maintenance/form.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/maintenance/form.html", {
         "maintenance": None,
         "vehicles": vehicle_service.get_all(),
         "action": "/maintenance",
@@ -85,8 +83,7 @@ async def create_maintenance(
         vehicle_service.update_km(vehicle_id, km_at_service)
 
     records = service.get_all()
-    return templates.TemplateResponse("pages/maintenance/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/maintenance/table.html", {
         "maintenances": [maintenance_to_dict(m) for m in records],
     })
 
@@ -96,7 +93,6 @@ async def delete_maintenance(request: Request, maintenance_id: int, db: Session 
     service = MaintenanceService(db)
     service.delete(maintenance_id)
     records = service.get_all()
-    return templates.TemplateResponse("pages/maintenance/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/maintenance/table.html", {
         "maintenances": [maintenance_to_dict(m) for m in records],
     })

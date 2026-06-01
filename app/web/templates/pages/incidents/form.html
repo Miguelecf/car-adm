@@ -1,16 +1,24 @@
-<div id="main-content">
-    <div class="mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">Nuevo Incidente</h2>
+<div id="main-content" data-current-path="{{ current_path }}">
+    <div class="mb-8">
+        <button type="button"
+                hx-get="/incidents"
+                hx-target="#main-content"
+                hx-swap="innerHTML"
+                hx-select="#main-content"
+                class="text-[#989898] hover:text-[#F5F0EB] text-lg mb-4 flex items-center gap-2 transition-colors duration-150">
+            <i class="fas fa-arrow-left"></i> Volver a Multas
+        </button>
+        <h2 class="text-4xl font-bold text-[#F5F0EB]">Nuevo Incidente</h2>
     </div>
 
     <form hx-post="{{ action }}"
           hx-target="#incidents-table-container"
           hx-swap="innerHTML"
-          class="bg-white rounded-xl shadow p-6 max-w-2xl">
-        <div class="grid grid-cols-2 gap-4">
+          class="bg-[#141414] border border-[#262626] rounded-2xl p-8 max-w-2xl">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Vehículo *</label>
-                <select name="vehicle_id" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Auto <span class="text-[#F5A623]">*</span></label>
+                <select name="vehicle_id" required class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
                     <option value="">Seleccionar...</option>
                     {% for v in vehicles %}
                     <option value="{{ v.id }}">{{ v.plate }} - {{ v.brand }} {{ v.model }}</option>
@@ -18,8 +26,8 @@
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Chofer</label>
-                <select name="driver_id" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Chofer</label>
+                <select name="driver_id" class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
                     <option value="">Sin asignar</option>
                     {% for d in drivers %}
                     <option value="{{ d.id }}">{{ d.name }} ({{ d.dni }})</option>
@@ -27,8 +35,8 @@
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Tipo *</label>
-                <select name="type" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Tipo <span class="text-[#F5A623]">*</span></label>
+                <select name="type" required class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
                     <option value="">Seleccionar...</option>
                     <option value="multa">Multa</option>
                     <option value="accidente">Accidente</option>
@@ -36,28 +44,33 @@
                 </select>
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Fecha *</label>
+                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Fecha <span class="text-[#F5A623]">*</span></label>
                 <input type="date" name="date" required
-                       class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Costo</label>
+                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Costo</label>
                 <input type="number" name="cost" value="0"
-                       class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
             </div>
-            <div class="col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+            <div class="md:col-span-2">
+                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Descripción</label>
                 <textarea name="description" rows="3"
-                          class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+                          class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150"></textarea>
             </div>
         </div>
 
-        <div class="flex justify-end gap-3 mt-6">
-            <button type="button" hx-get="/incidents" hx-target="#main-content" hx-swap="innerHTML"
-                    class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition">
+        <div class="flex justify-end gap-4 mt-8">
+            <button type="button"
+                    hx-get="/incidents"
+                    hx-target="#main-content"
+                    hx-swap="innerHTML"
+                    hx-select="#main-content"
+                    class="px-6 py-3 text-lg text-[#989898] hover:text-[#F5F0EB] hover:bg-[#1C1C1C] rounded-xl transition-all duration-150">
                 Cancelar
             </button>
-            <button type="submit" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition">
+            <button type="submit"
+                    class="px-8 py-3 bg-[#F5A623] hover:bg-[#E0950A] text-[#0A0A0A] text-lg font-bold rounded-xl transition-all duration-150">
                 Guardar
             </button>
         </div>

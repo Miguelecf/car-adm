@@ -1,57 +1,70 @@
-<div id="main-content">
-    <div class="mb-6">
-        <h2 class="text-2xl font-bold text-gray-800">{{ 'Editar' if driver else 'Nuevo' }} Chofer</h2>
+<div id="main-content" data-current-path="{{ current_path }}">
+    <div class="mb-8">
+        <button type="button"
+                hx-get="/drivers"
+                hx-target="#main-content"
+                hx-swap="innerHTML"
+                hx-select="#main-content"
+                class="text-[#989898] hover:text-[#F5F0EB] text-lg mb-4 flex items-center gap-2 transition-colors duration-150">
+            <i class="fas fa-arrow-left"></i> Volver a Choferes
+        </button>
+        <h2 class="text-4xl font-bold text-[#F5F0EB]">{{ 'Editar' if driver else 'Nuevo' }} Chofer</h2>
     </div>
 
     <form hx-post="{{ action }}"
           hx-target="#drivers-table-container"
           hx-swap="innerHTML"
-          class="bg-white rounded-xl shadow p-6 max-w-lg">
-        <div class="grid grid-cols-2 gap-4">
-            <div class="col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Nombre completo *</label>
+          class="bg-[#141414] border border-[#262626] rounded-2xl p-8 max-w-2xl">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="md:col-span-2">
+                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Nombre completo <span class="text-[#F5A623]">*</span></label>
                 <input type="text" name="name" required
                        value="{{ driver.name if driver else '' }}"
-                       class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">DNI *</label>
+                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">DNI <span class="text-[#F5A623]">*</span></label>
                 <input type="text" name="dni" required
                        value="{{ driver.dni if driver else '' }}"
-                       class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Teléfono</label>
                 <input type="text" name="phone"
                        value="{{ driver.phone if driver else '' }}"
-                       class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
             </div>
-            <div class="col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+            <div class="md:col-span-2">
+                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Dirección</label>
                 <input type="text" name="address"
                        value="{{ driver.address if driver else '' }}"
-                       class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Nº Licencia</label>
+                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Nº Licencia</label>
                 <input type="text" name="license_number"
                        value="{{ driver.license_number if driver else '' }}"
-                       class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
             </div>
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Vencimiento licencia</label>
+                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Vencimiento licencia</label>
                 <input type="date" name="license_expiry"
                        value="{{ driver.license_expiry if driver else '' }}"
-                       class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
             </div>
         </div>
 
-        <div class="flex justify-end gap-3 mt-6">
-            <button type="button" hx-get="/drivers" hx-target="#main-content" hx-swap="innerHTML"
-                    class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition">
+        <div class="flex justify-end gap-4 mt-8">
+            <button type="button"
+                    hx-get="/drivers"
+                    hx-target="#main-content"
+                    hx-swap="innerHTML"
+                    hx-select="#main-content"
+                    class="px-6 py-3 text-lg text-[#989898] hover:text-[#F5F0EB] hover:bg-[#1C1C1C] rounded-xl transition-all duration-150">
                 Cancelar
             </button>
-            <button type="submit" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition">
+            <button type="submit"
+                    class="px-8 py-3 bg-[#F5A623] hover:bg-[#E0950A] text-[#0A0A0A] text-lg font-bold rounded-xl transition-all duration-150">
                 Guardar
             </button>
         </div>

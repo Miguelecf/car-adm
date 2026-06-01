@@ -31,8 +31,7 @@ def incident_to_dict(i: Incident) -> dict:
 async def list_incidents(request: Request, db: Session = Depends(get_db)):
     service = IncidentService(db)
     incidents = service.get_all()
-    return templates.TemplateResponse("pages/incidents/list.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/incidents/list.html", {
         "incidents": [incident_to_dict(i) for i in incidents],
         "current_path": "/incidents",
     })
@@ -42,8 +41,7 @@ async def list_incidents(request: Request, db: Session = Depends(get_db)):
 async def new_incident_form(request: Request, db: Session = Depends(get_db)):
     vehicle_service = VehicleService(db)
     driver_service = DriverService(db)
-    return templates.TemplateResponse("pages/incidents/form.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/incidents/form.html", {
         "incident": None,
         "vehicles": vehicle_service.get_all(),
         "drivers": driver_service.get_all(),
@@ -76,8 +74,7 @@ async def create_incident(
         "status": IncidentStatus.PENDIENTE,
     })
     incidents = service.get_all()
-    return templates.TemplateResponse("pages/incidents/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/incidents/table.html", {
         "incidents": [incident_to_dict(i) for i in incidents],
     })
 
@@ -87,8 +84,7 @@ async def resolve_incident(request: Request, incident_id: int, db: Session = Dep
     service = IncidentService(db)
     service.resolve(incident_id)
     incidents = service.get_all()
-    return templates.TemplateResponse("pages/incidents/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/incidents/table.html", {
         "incidents": [incident_to_dict(i) for i in incidents],
     })
 
@@ -98,7 +94,6 @@ async def delete_incident(request: Request, incident_id: int, db: Session = Depe
     service = IncidentService(db)
     service.delete(incident_id)
     incidents = service.get_all()
-    return templates.TemplateResponse("pages/incidents/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/incidents/table.html", {
         "incidents": [incident_to_dict(i) for i in incidents],
     })

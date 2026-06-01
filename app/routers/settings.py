@@ -9,8 +9,7 @@ router = APIRouter()
 
 @router.get("/settings", response_class=HTMLResponse)
 async def settings_page(request: Request):
-    return templates.TemplateResponse("pages/settings.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/settings.html", {
         "current_path": "/settings",
         "payment_day": settings.PAYMENT_DAY,
     })
@@ -24,8 +23,7 @@ async def update_settings(
     from app.core.config import Settings
     s = Settings()
     s.PAYMENT_DAY = payment_day
-    return templates.TemplateResponse("pages/settings.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/settings.html", {
         "current_path": "/settings",
         "payment_day": payment_day,
         "success": True,

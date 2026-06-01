@@ -30,8 +30,7 @@ def payment_to_dict(p: Payment) -> dict:
 async def list_payments(request: Request, db: Session = Depends(get_db)):
     service = PaymentService(db)
     payments = service.get_all()
-    return templates.TemplateResponse("pages/payments/list.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/payments/list.html", {
         "payments": [payment_to_dict(p) for p in payments],
         "current_path": "/payments",
     })
@@ -40,8 +39,7 @@ async def list_payments(request: Request, db: Session = Depends(get_db)):
 @router.get("/payments/new", response_class=HTMLResponse)
 async def new_payment_form(request: Request, db: Session = Depends(get_db)):
     contract_service = ContractService(db)
-    return templates.TemplateResponse("pages/payments/form.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/payments/form.html", {
         "payment": None,
         "contracts": contract_service.get_active(),
         "action": "/payments",
@@ -71,8 +69,7 @@ async def create_payment(
         "status": PaymentStatus.PENDIENTE,
     })
     payments = service.get_all()
-    return templates.TemplateResponse("pages/payments/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/payments/table.html", {
         "payments": [payment_to_dict(p) for p in payments],
     })
 
@@ -90,8 +87,7 @@ async def mark_payment_paid(
     service = PaymentService(db)
     service.mark_paid(payment_id, date.fromisoformat(payment_date), PaymentMethod(method), notes)
     payments = service.get_all()
-    return templates.TemplateResponse("pages/payments/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/payments/table.html", {
         "payments": [payment_to_dict(p) for p in payments],
     })
 
@@ -99,8 +95,7 @@ async def mark_payment_paid(
 @router.get("/payments/{payment_id}/pay", response_class=HTMLResponse)
 async def pay_payment_form(request: Request, payment_id: int):
     from datetime import date
-    return templates.TemplateResponse("pages/payments/pay_form.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/payments/pay_form.html", {
         "payment_id": payment_id,
         "today": date.today().isoformat(),
         "current_path": "/payments",
@@ -112,8 +107,7 @@ async def delete_payment(request: Request, payment_id: int, db: Session = Depend
     service = PaymentService(db)
     service.delete(payment_id)
     payments = service.get_all()
-    return templates.TemplateResponse("pages/payments/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/payments/table.html", {
         "payments": [payment_to_dict(p) for p in payments],
     })
 
@@ -123,7 +117,6 @@ async def generate_payments(request: Request, db: Session = Depends(get_db)):
     service = PaymentService(db)
     service.generate_weekly_payments()
     payments = service.get_all()
-    return templates.TemplateResponse("pages/payments/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/payments/table.html", {
         "payments": [payment_to_dict(p) for p in payments],
     })

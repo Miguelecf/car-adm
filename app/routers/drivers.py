@@ -26,8 +26,7 @@ def driver_to_dict(d: Driver) -> dict:
 async def list_drivers(request: Request, db: Session = Depends(get_db)):
     service = DriverService(db)
     drivers = service.get_all()
-    return templates.TemplateResponse("pages/drivers/list.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/drivers/list.html", {
         "drivers": [driver_to_dict(d) for d in drivers],
         "current_path": "/drivers",
     })
@@ -35,8 +34,7 @@ async def list_drivers(request: Request, db: Session = Depends(get_db)):
 
 @router.get("/drivers/new", response_class=HTMLResponse)
 async def new_driver_form(request: Request):
-    return templates.TemplateResponse("pages/drivers/form.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/drivers/form.html", {
         "driver": None,
         "action": "/drivers",
         "current_path": "/drivers",
@@ -70,8 +68,7 @@ async def create_driver(
         "license_expiry": license_expiry_date,
     })
     drivers = service.get_all()
-    return templates.TemplateResponse("pages/drivers/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/drivers/table.html", {
         "drivers": [driver_to_dict(d) for d in drivers],
     })
 
@@ -82,8 +79,7 @@ async def edit_driver_form(request: Request, driver_id: int, db: Session = Depen
     driver = service.get_by_id(driver_id)
     if not driver:
         return HTMLResponse("No encontrado", status_code=404)
-    return templates.TemplateResponse("pages/drivers/form.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/drivers/form.html", {
         "driver": driver_to_dict(driver),
         "action": f"/drivers/{driver_id}",
         "current_path": "/drivers",
@@ -118,8 +114,7 @@ async def update_driver(
         "license_expiry": license_expiry_date,
     })
     drivers = service.get_all()
-    return templates.TemplateResponse("pages/drivers/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/drivers/table.html", {
         "drivers": [driver_to_dict(d) for d in drivers],
     })
 
@@ -129,7 +124,6 @@ async def delete_driver(request: Request, driver_id: int, db: Session = Depends(
     service = DriverService(db)
     service.delete(driver_id)
     drivers = service.get_all()
-    return templates.TemplateResponse("pages/drivers/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/drivers/table.html", {
         "drivers": [driver_to_dict(d) for d in drivers],
     })

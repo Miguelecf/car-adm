@@ -30,8 +30,7 @@ def vehicle_to_dict(v: Vehicle) -> dict:
 async def list_vehicles(request: Request, db: Session = Depends(get_db)):
     service = VehicleService(db)
     vehicles = service.get_all()
-    return templates.TemplateResponse("pages/vehicles/list.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/vehicles/list.html", {
         "vehicles": [vehicle_to_dict(v) for v in vehicles],
         "current_path": "/vehicles",
     })
@@ -39,8 +38,7 @@ async def list_vehicles(request: Request, db: Session = Depends(get_db)):
 
 @router.get("/vehicles/new", response_class=HTMLResponse)
 async def new_vehicle_form(request: Request):
-    return templates.TemplateResponse("pages/vehicles/form.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/vehicles/form.html", {
         "vehicle": None,
         "action": "/vehicles",
         "current_path": "/vehicles",
@@ -69,8 +67,7 @@ async def create_vehicle(
         "status": VehicleStatus.ACTIVO,
     })
     vehicles = service.get_all()
-    return templates.TemplateResponse("pages/vehicles/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/vehicles/table.html", {
         "vehicles": [vehicle_to_dict(v) for v in vehicles],
     })
 
@@ -81,8 +78,7 @@ async def edit_vehicle_form(request: Request, vehicle_id: int, db: Session = Dep
     vehicle = service.get_by_id(vehicle_id)
     if not vehicle:
         return HTMLResponse("No encontrado", status_code=404)
-    return templates.TemplateResponse("pages/vehicles/form.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/vehicles/form.html", {
         "vehicle": vehicle_to_dict(vehicle),
         "action": f"/vehicles/{vehicle_id}",
         "current_path": "/vehicles",
@@ -113,8 +109,7 @@ async def update_vehicle(
         "status": VehicleStatus(status),
     })
     vehicles = service.get_all()
-    return templates.TemplateResponse("pages/vehicles/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/vehicles/table.html", {
         "vehicles": [vehicle_to_dict(v) for v in vehicles],
     })
 
@@ -124,7 +119,6 @@ async def delete_vehicle(request: Request, vehicle_id: int, db: Session = Depend
     service = VehicleService(db)
     service.delete(vehicle_id)
     vehicles = service.get_all()
-    return templates.TemplateResponse("pages/vehicles/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/vehicles/table.html", {
         "vehicles": [vehicle_to_dict(v) for v in vehicles],
     })

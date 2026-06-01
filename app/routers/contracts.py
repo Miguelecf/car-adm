@@ -33,8 +33,7 @@ def contract_to_dict(c: Contract) -> dict:
 async def list_contracts(request: Request, db: Session = Depends(get_db)):
     service = ContractService(db)
     contracts = service.get_all()
-    return templates.TemplateResponse("pages/contracts/list.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/contracts/list.html", {
         "contracts": [contract_to_dict(c) for c in contracts],
         "current_path": "/contracts",
     })
@@ -44,8 +43,7 @@ async def list_contracts(request: Request, db: Session = Depends(get_db)):
 async def new_contract_form(request: Request, db: Session = Depends(get_db)):
     vehicle_service = VehicleService(db)
     driver_service = DriverService(db)
-    return templates.TemplateResponse("pages/contracts/form.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/contracts/form.html", {
         "contract": None,
         "vehicles": vehicle_service.get_all(),
         "drivers": driver_service.get_all(),
@@ -84,8 +82,7 @@ async def create_contract(
         "status": ContractStatus.ACTIVO,
     })
     contracts = service.get_all()
-    return templates.TemplateResponse("pages/contracts/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/contracts/table.html", {
         "contracts": [contract_to_dict(c) for c in contracts],
     })
 
@@ -98,8 +95,7 @@ async def edit_contract_form(request: Request, contract_id: int, db: Session = D
         return HTMLResponse("No encontrado", status_code=404)
     vehicle_service = VehicleService(db)
     driver_service = DriverService(db)
-    return templates.TemplateResponse("pages/contracts/form.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/contracts/form.html", {
         "contract": contract_to_dict(contract),
         "vehicles": vehicle_service.get_all(),
         "drivers": driver_service.get_all(),
@@ -142,8 +138,7 @@ async def update_contract(
         "status": ContractStatus(status),
     })
     contracts = service.get_all()
-    return templates.TemplateResponse("pages/contracts/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/contracts/table.html", {
         "contracts": [contract_to_dict(c) for c in contracts],
     })
 
@@ -153,7 +148,6 @@ async def delete_contract(request: Request, contract_id: int, db: Session = Depe
     service = ContractService(db)
     service.delete(contract_id)
     contracts = service.get_all()
-    return templates.TemplateResponse("pages/contracts/table.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/contracts/table.html", {
         "contracts": [contract_to_dict(c) for c in contracts],
     })

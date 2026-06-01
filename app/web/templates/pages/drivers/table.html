@@ -1,53 +1,63 @@
 <table class="w-full">
-    <thead class="bg-gray-50 border-b">
+    <thead class="bg-[#1C1C1C] border-b border-[#262626]">
         <tr>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">DNI</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Teléfono</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Licencia</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Venc. Licencia</th>
-            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Nombre</th>
+            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">DNI</th>
+            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Teléfono</th>
+            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Licencia</th>
+            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Venc. Licencia</th>
+            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Acciones</th>
         </tr>
     </thead>
-    <tbody class="divide-y divide-gray-200">
+    <tbody class="divide-y divide-[#262626]">
         {% for driver in drivers %}
-        <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 font-medium text-gray-900">{{ driver.name }}</td>
-            <td class="px-6 py-4 text-gray-700">{{ driver.dni }}</td>
-            <td class="px-6 py-4 text-gray-700">{{ driver.phone or '-' }}</td>
-            <td class="px-6 py-4 text-gray-700">{{ driver.license_number or '-' }}</td>
+        <tr class="hover:bg-[#1C1C1C] transition-colors duration-150">
+            <td class="px-6 py-4 text-lg font-bold text-[#F5F0EB]">{{ driver.name }}</td>
+            <td class="px-6 py-4 text-lg text-[#989898]">{{ driver.dni }}</td>
+            <td class="px-6 py-4 text-lg text-[#989898]">{{ driver.phone or '-' }}</td>
+            <td class="px-6 py-4 text-lg text-[#989898]">{{ driver.license_number or '-' }}</td>
             <td class="px-6 py-4">
                 {% if driver.license_expiry %}
                     {% if driver.license_expiry < settings.TODAY %}
-                    <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-700">Vencida</span>
+                    <span class="px-4 py-1.5 text-base rounded-full font-medium bg-[#3B1219] text-[#EF4444]">Vencida</span>
                     {% else %}
-                    <span class="text-gray-700">{{ driver.license_expiry }}</span>
+                    <span class="text-lg text-[#989898]">{{ driver.license_expiry }}</span>
                     {% endif %}
                 {% else %}
-                <span class="text-gray-400">-</span>
+                <span class="text-lg text-[#5C5C5C]">-</span>
                 {% endif %}
             </td>
             <td class="px-6 py-4">
                 <button hx-get="/drivers/{{ driver.id }}/edit"
                         hx-target="#main-content"
                         hx-swap="innerHTML"
-                        class="text-blue-500 hover:text-blue-700 mr-3">
+                        hx-select="#main-content"
+                        class="text-[#989898] hover:text-[#F5A623] mr-4 transition-colors duration-150 text-xl"
+                        title="Editar">
                     <i class="fas fa-edit"></i>
                 </button>
                 <button hx-delete="/drivers/{{ driver.id }}"
                         hx-target="#drivers-table-container"
                         hx-swap="innerHTML"
                         hx-confirm="¿Eliminar este chofer?"
-                        class="text-red-500 hover:text-red-700">
+                        class="text-[#989898] hover:text-[#EF4444] transition-colors duration-150 text-xl"
+                        title="Eliminar">
                     <i class="fas fa-trash"></i>
                 </button>
             </td>
         </tr>
         {% else %}
         <tr>
-            <td colspan="6" class="px-6 py-8 text-center text-gray-400">
-                <i class="fas fa-users text-4xl mb-2"></i>
-                <p>No hay choferes registrados</p>
+            <td colspan="6" class="px-6 py-12 text-center">
+                <span class="text-5xl mb-3 block">👤</span>
+                <p class="text-xl text-[#5C5C5C]">No hay choferes registrados</p>
+                <button hx-get="/drivers/new"
+                        hx-target="#main-content"
+                        hx-swap="innerHTML"
+                        hx-select="#main-content"
+                        class="mt-4 text-[#F5A623] hover:text-[#E0950A] text-lg font-medium transition-colors duration-150">
+                    Agregar el primero →
+                </button>
             </td>
         </tr>
         {% endfor %}

@@ -19,8 +19,7 @@ async def dashboard(request: Request, db: Session = Depends(get_db)):
     stats["profitability"] = service.get_profitability()
     stats["pending_payments"] = service.get_pending_payments()
 
-    return templates.TemplateResponse("pages/dashboard.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "pages/dashboard.html", {
         "stats": stats,
         "current_path": "/",
     })

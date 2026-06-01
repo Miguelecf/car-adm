@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{{ settings.APP_NAME }}{% endblock %}</title>
+    <title>{% block title %}EasyTaxi{% endblock %}</title>
     <script src="https://unpkg.com/htmx.org@2.0.3"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
@@ -12,15 +12,131 @@
             e.detail.headers['X-Requested-With'] = 'XMLHttpRequest';
         });
     </script>
+    <style>
+        /* ── Base ── */
+        *, *::before, *::after { box-sizing: border-box; }
+        html { 
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            user-select: none;
+        }
+        body {
+            background-color: #0A0A0A;
+            color: #F5F0EB;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* ── Scrollbar ── */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #262626; border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3D3D3D; }
+
+        /* ── Selection ── */
+        ::selection { background: rgba(245, 166, 35, 0.3); color: #F5F0EB; }
+
+        /* ── Focus ── */
+        *:focus-visible {
+            outline: 2px solid #F5A623;
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* ── Nav scroll ── */
+        .nav-container::-webkit-scrollbar { display: none; }
+        .nav-container { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
     {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-gray-100">
-    <div class="flex min-h-screen">
-        {% include "components/sidebar.html" %}
-        <main class="flex-1 p-6 ml-64">
-            {% block content %}{% endblock %}
-        </main>
-    </div>
+<body>
+
+    <header class="sticky top-0 z-50 border-b border-[#262626] bg-[#0A0A0A]/80 backdrop-blur-xl">
+        <div class="mx-auto max-w-7xl flex items-center justify-between h-16 px-6">
+            <a href="/"
+               hx-get="/"
+               hx-target="#main-content"
+               hx-swap="innerHTML"
+               hx-select="#main-content"
+               hx-push-url="true"
+               class="flex items-center gap-3 flex-shrink-0">
+                <span class="text-3xl">🚕</span>
+                <span class="text-xl font-bold tracking-tight text-[#F5F0EB]">EasyTaxi</span>
+            </a>
+            <nav class="nav-container flex items-center gap-1 overflow-x-auto ml-8">
+                {% set nav_items = [
+                    ('/', 'home', 'Inicio'),
+                    ('/vehicles', 'car', 'Autos'),
+                    ('/drivers', 'users', 'Choferes'),
+                    ('/contracts', 'file-contract', 'Contratos'),
+                    ('/payments', 'money-bill-wave', 'Cobros'),
+                    ('/maintenance', 'wrench', 'Servicio'),
+                    ('/documents', 'file-alt', 'Documentos'),
+                    ('/incidents', 'exclamation-triangle', 'Multas'),
+                    ('/settings', 'cog', 'Ajustes'),
+                ] %}
+                {% for href, icon, label in nav_items %}
+                <a href="{{ href }}"
+                   hx-get="{{ href }}"
+                   hx-target="#main-content"
+                   hx-swap="innerHTML"
+                   hx-select="#main-content"
+                   hx-push-url="true"
+                   class="nav-link flex items-center gap-2 px-4 py-2 rounded-lg text-lg font-medium transition-all duration-150
+                          {% if current_path == href or (href != '/' and current_path.startswith(href)) %}
+                          bg-[#3D2E0A] text-[#F5A623]
+                          {% else %}
+                          text-[#989898] hover:text-[#F5F0EB] hover:bg-[#1C1C1C]
+                          {% endif %}">
+                    <i class="fas fa-{{ icon }} text-base w-5 text-center"></i>
+                    <span class="hidden sm:inline">{{ label }}</span>
+                </a>
+                {% endfor %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="mx-auto max-w-7xl px-6 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        function updateNavActiveState(currentPath) {
+            document.querySelectorAll('.nav-link').forEach(function(link) {
+                const linkPath = link.getAttribute('href');
+                let isActive = false;
+
+                if (linkPath === '/') {
+                    isActive = (currentPath === '/');
+                } else {
+                    isActive = currentPath.startsWith(linkPath);
+                }
+
+                if (isActive) {
+                    link.classList.remove('text-[#989898]', 'hover:text-[#F5F0EB]', 'hover:bg-[#1C1C1C]');
+                    link.classList.add('bg-[#3D2E0A]', 'text-[#F5A623]');
+                } else {
+                    link.classList.remove('bg-[#3D2E0A]', 'text-[#F5A623]');
+                    link.classList.add('text-[#989898]', 'hover:text-[#F5F0EB]', 'hover:bg-[#1C1C1C]');
+                }
+            });
+        }
+
+        // Carga inicial
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNavActiveState(window.location.pathname);
+        });
+
+        // Después de cualquier swap de HTMX (navegación interna)
+        document.addEventListener('htmx:afterSettle', function() {
+            updateNavActiveState(window.location.pathname);
+        });
+
+        // Navegación con botones atrás/adelante del navegador
+        window.addEventListener('popstate', function() {
+            updateNavActiveState(window.location.pathname);
+        });
+    </script>
+
     {% block scripts %}{% endblock %}
 </body>
 </html>
