@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Date, Enum, Text
 from sqlalchemy.orm import relationship
 import enum
 from app.core.database import Base
+from app.models.soft_delete import SoftDeleteMixin
 
 
 class MaintenanceType(str, enum.Enum):
@@ -13,7 +14,7 @@ class MaintenanceType(str, enum.Enum):
     OTRO = "otro"
 
 
-class Maintenance(Base):
+class Maintenance(SoftDeleteMixin, Base):
     __tablename__ = "maintenances"
 
     id = Column(Integer, primary_key=True, index=True)

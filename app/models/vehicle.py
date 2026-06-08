@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Enum, DateTime
 from sqlalchemy.sql import func
 import enum
 from app.core.database import Base
+from app.models.soft_delete import SoftDeleteMixin
 
 
 class VehicleStatus(str, enum.Enum):
@@ -10,7 +11,7 @@ class VehicleStatus(str, enum.Enum):
     FUERA_SERVICIO = "fuera_servicio"
 
 
-class Vehicle(Base):
+class Vehicle(SoftDeleteMixin, Base):
     __tablename__ = "vehicles"
 
     id = Column(Integer, primary_key=True, index=True)

@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Date, Enum, Text
 from sqlalchemy.orm import relationship
 import enum
 from app.core.database import Base
+from app.models.soft_delete import SoftDeleteMixin
 
 
 class IncidentType(str, enum.Enum):
@@ -15,7 +16,7 @@ class IncidentStatus(str, enum.Enum):
     RESUELTO = "resuelto"
 
 
-class Incident(Base):
+class Incident(SoftDeleteMixin, Base):
     __tablename__ = "incidents"
 
     id = Column(Integer, primary_key=True, index=True)

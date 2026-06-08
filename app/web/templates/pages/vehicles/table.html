@@ -1,38 +1,38 @@
-<table class="w-full">
-    <thead class="bg-[#1C1C1C] border-b border-[#262626]">
+<table class="table-base">
+    <thead class="table-head">
         <tr>
-            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Matrícula</th>
-            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Marca/Modelo</th>
-            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Año</th>
-            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Color</th>
-            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Km</th>
-            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Estado</th>
-            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Acciones</th>
+            <th class="table-head-cell">Matrícula</th>
+            <th class="table-head-cell">Marca/Modelo</th>
+            <th class="table-head-cell">Año</th>
+            <th class="table-head-cell">Color</th>
+            <th class="table-head-cell">Km</th>
+            <th class="table-head-cell">Estado</th>
+            <th class="table-head-cell">Acciones</th>
         </tr>
     </thead>
     <tbody class="divide-y divide-[#262626]">
         {% for vehicle in vehicles %}
-        <tr class="hover:bg-[#1C1C1C] transition-colors duration-150">
-            <td class="px-6 py-4 text-lg font-bold text-[#F5F0EB]">{{ vehicle.plate }}</td>
-            <td class="px-6 py-4 text-lg text-[#989898]">{{ vehicle.brand }} {{ vehicle.model }}</td>
-            <td class="px-6 py-4 text-lg text-[#989898]">{{ vehicle.year }}</td>
-            <td class="px-6 py-4 text-lg text-[#989898]">{{ vehicle.color or '-' }}</td>
-            <td class="px-6 py-4 text-lg text-[#989898]">{{ vehicle.current_km|default(0) }}</td>
-            <td class="px-6 py-4">
+        <tr class="table-row">
+            <td class="table-cell-strong">{{ vehicle.plate }}</td>
+            <td class="table-cell">{{ vehicle.brand }} {{ vehicle.model }}</td>
+            <td class="table-cell">{{ vehicle.year }}</td>
+            <td class="table-cell">{{ vehicle.color or '-' }}</td>
+            <td class="table-cell">{{ vehicle.current_km|default(0) }}</td>
+            <td class="table-cell">
                 {% if vehicle.status == 'activo' %}
-                <span class="px-4 py-1.5 text-base rounded-full font-medium bg-[#0F291E] text-[#22C55E]">Activo</span>
+                <span class="status-badge status-success">Activo</span>
                 {% elif vehicle.status == 'en_taller' %}
-                <span class="px-4 py-1.5 text-base rounded-full font-medium bg-[#3D2E0A] text-[#F5A623]">En taller</span>
+                <span class="status-badge status-warning">En taller</span>
                 {% else %}
-                <span class="px-4 py-1.5 text-base rounded-full font-medium bg-[#3B1219] text-[#EF4444]">Fuera de servicio</span>
+                <span class="status-badge status-danger">Fuera de servicio</span>
                 {% endif %}
             </td>
-            <td class="px-6 py-4">
+            <td class="table-cell">
                 <button hx-get="/vehicles/{{ vehicle.id }}/edit"
                         hx-target="#main-content"
                         hx-swap="innerHTML"
                         hx-select="#main-content"
-                        class="text-[#989898] hover:text-[#F5A623] mr-4 transition-colors duration-150 text-xl"
+                        class="icon-action mr-4"
                         title="Editar">
                     <i class="fas fa-edit"></i>
                 </button>
@@ -40,7 +40,7 @@
                         hx-target="#vehicles-table-container"
                         hx-swap="innerHTML"
                         hx-confirm="¿Eliminar este vehículo?"
-                        class="text-[#989898] hover:text-[#EF4444] transition-colors duration-150 text-xl"
+                        class="icon-action icon-action-danger"
                         title="Eliminar">
                     <i class="fas fa-trash"></i>
                 </button>
@@ -55,7 +55,7 @@
                         hx-target="#main-content"
                         hx-swap="innerHTML"
                         hx-select="#main-content"
-                        class="mt-4 text-[#F5A623] hover:text-[#E0950A] text-lg font-medium transition-colors duration-150">
+                        class="empty-state-link">
                     Agregar el primero →
                 </button>
             </td>

@@ -20,9 +20,7 @@ async def update_settings(
     request: Request,
     payment_day: int = Form(...),
 ):
-    from app.core.config import Settings
-    s = Settings()
-    s.PAYMENT_DAY = payment_day
+    settings.PAYMENT_DAY = payment_day
     return templates.TemplateResponse(request, "pages/settings.html", {
         "current_path": "/settings",
         "payment_day": payment_day,

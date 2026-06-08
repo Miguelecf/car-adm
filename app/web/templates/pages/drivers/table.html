@@ -1,38 +1,38 @@
-<table class="w-full">
-    <thead class="bg-[#1C1C1C] border-b border-[#262626]">
+<table class="table-base">
+    <thead class="table-head">
         <tr>
-            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Nombre</th>
-            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">DNI</th>
-            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Teléfono</th>
-            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Licencia</th>
-            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Venc. Licencia</th>
-            <th class="px-6 py-4 text-left text-base font-semibold text-[#989898]">Acciones</th>
+            <th class="table-head-cell">Nombre</th>
+            <th class="table-head-cell">DNI</th>
+            <th class="table-head-cell">Teléfono</th>
+            <th class="table-head-cell">Licencia</th>
+            <th class="table-head-cell">Venc. Licencia</th>
+            <th class="table-head-cell">Acciones</th>
         </tr>
     </thead>
     <tbody class="divide-y divide-[#262626]">
         {% for driver in drivers %}
-        <tr class="hover:bg-[#1C1C1C] transition-colors duration-150">
-            <td class="px-6 py-4 text-lg font-bold text-[#F5F0EB]">{{ driver.name }}</td>
-            <td class="px-6 py-4 text-lg text-[#989898]">{{ driver.dni }}</td>
-            <td class="px-6 py-4 text-lg text-[#989898]">{{ driver.phone or '-' }}</td>
-            <td class="px-6 py-4 text-lg text-[#989898]">{{ driver.license_number or '-' }}</td>
-            <td class="px-6 py-4">
+        <tr class="table-row">
+            <td class="table-cell-strong">{{ driver.name }}</td>
+            <td class="table-cell">{{ driver.dni }}</td>
+            <td class="table-cell">{{ driver.phone or '-' }}</td>
+            <td class="table-cell">{{ driver.license_number or '-' }}</td>
+            <td class="table-cell">
                 {% if driver.license_expiry %}
-                    {% if driver.license_expiry < settings.TODAY %}
-                    <span class="px-4 py-1.5 text-base rounded-full font-medium bg-[#3B1219] text-[#EF4444]">Vencida</span>
+                    {% if driver.license_expiry < TODAY %}
+                    <span class="status-badge status-danger">Vencida</span>
                     {% else %}
-                    <span class="text-lg text-[#989898]">{{ driver.license_expiry }}</span>
+                    <span>{{ driver.license_expiry | format_date_latam }}</span>
                     {% endif %}
                 {% else %}
-                <span class="text-lg text-[#5C5C5C]">-</span>
+                <span class="text-[#5C5C5C]">-</span>
                 {% endif %}
             </td>
-            <td class="px-6 py-4">
+            <td class="table-cell">
                 <button hx-get="/drivers/{{ driver.id }}/edit"
                         hx-target="#main-content"
                         hx-swap="innerHTML"
                         hx-select="#main-content"
-                        class="text-[#989898] hover:text-[#F5A623] mr-4 transition-colors duration-150 text-xl"
+                        class="icon-action mr-4"
                         title="Editar">
                     <i class="fas fa-edit"></i>
                 </button>
@@ -40,7 +40,7 @@
                         hx-target="#drivers-table-container"
                         hx-swap="innerHTML"
                         hx-confirm="¿Eliminar este chofer?"
-                        class="text-[#989898] hover:text-[#EF4444] transition-colors duration-150 text-xl"
+                        class="icon-action icon-action-danger"
                         title="Eliminar">
                     <i class="fas fa-trash"></i>
                 </button>
@@ -55,7 +55,7 @@
                         hx-target="#main-content"
                         hx-swap="innerHTML"
                         hx-select="#main-content"
-                        class="mt-4 text-[#F5A623] hover:text-[#E0950A] text-lg font-medium transition-colors duration-150">
+                        class="empty-state-link">
                     Agregar el primero →
                 </button>
             </td>

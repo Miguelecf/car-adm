@@ -14,6 +14,7 @@ class ContractService:
         return (
             self.db.query(Contract)
             .options(joinedload(Contract.vehicle), joinedload(Contract.driver))
+            .filter(Contract.deleted_at.is_(None))
             .order_by(Contract.id.desc())
             .all()
         )
@@ -22,18 +23,20 @@ class ContractService:
         return (
             self.db.query(Contract)
             .options(joinedload(Contract.vehicle), joinedload(Contract.driver))
-            .filter(Contract.status == ContractStatus.ACTIVO)
+            .filter(Contract.status == ContractStatus.ACTIVO, Contract.deleted_at.is_(None))
             .order_by(Contract.id.desc())
             .all()
         )
 
-    def get_by_id(self, contract_id: int) -> Optional[Contract]:
-        return (
+    def get_by_id(self, contract_id: int, include_deleted: bool = False) -> Optional[Contract]:
+        query = (
             self.db.query(Contract)
             .options(joinedload(Contract.vehicle), joinedload(Contract.driver))
             .filter(Contract.id == contract_id)
-            .first()
         )
+        if not include_deleted:
+            query = query.filter(Contract.deleted_at.is_(None))
+        return query.first()
 
     def create(self, data: dict) -> Contract:
         contract = Contract(**data)
@@ -67,7 +70,7 @@ class ContractService:
         contract = self.get_by_id(contract_id)
         if not contract:
             return False
-        self.db.delete(contract)
+        contract.soft_delete(reason="Deleted from contracts UI")
         self.db.commit()
         return True
 
@@ -82,6 +85,7 @@ class ContractService:
             .options(joinedload(Contract.vehicle), joinedload(Contract.driver))
             .filter(
                 Contract.status == ContractStatus.ACTIVO,
+                Contract.deleted_at.is_(None),
                 Contract.start_date <= end_of_week,
             )
             .all()

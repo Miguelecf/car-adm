@@ -6,6 +6,7 @@ from app.models import Contract, ContractStatus
 from app.services.contract_service import ContractService
 from app.services.vehicle_service import VehicleService
 from app.services.driver_service import DriverService
+from app.utils.dates import parse_latam_date
 from app.web.templates import templates
 
 
@@ -64,26 +65,22 @@ async def create_contract(
     start_km: int = Form(...),
     db: Session = Depends(get_db),
 ):
-    from datetime import date
     service = ContractService(db)
-
-    end_date_val = None
-    if end_date:
-        end_date_val = date.fromisoformat(end_date)
 
     contract = service.create({
         "vehicle_id": vehicle_id,
         "driver_id": driver_id,
-        "start_date": date.fromisoformat(start_date),
-        "end_date": end_date_val,
+        "start_date": parse_latam_date(start_date, "Fecha inicio"),
+        "end_date": parse_latam_date(end_date, "Fecha fin", required=False),
         "weekly_amount": weekly_amount,
         "deposit_amount": deposit_amount,
         "start_km": start_km,
         "status": ContractStatus.ACTIVO,
     })
     contracts = service.get_all()
-    return templates.TemplateResponse(request, "pages/contracts/table.html", {
+    return templates.TemplateResponse(request, "pages/contracts/list.html", {
         "contracts": [contract_to_dict(c) for c in contracts],
+        "current_path": "/contracts",
     })
 
 
@@ -119,18 +116,13 @@ async def update_contract(
     status: str = Form("activo"),
     db: Session = Depends(get_db),
 ):
-    from datetime import date
     service = ContractService(db)
-
-    end_date_val = None
-    if end_date:
-        end_date_val = date.fromisoformat(end_date)
 
     contract = service.update(contract_id, {
         "vehicle_id": vehicle_id,
         "driver_id": driver_id,
-        "start_date": date.fromisoformat(start_date),
-        "end_date": end_date_val,
+        "start_date": parse_latam_date(start_date, "Fecha inicio"),
+        "end_date": parse_latam_date(end_date, "Fecha fin", required=False),
         "weekly_amount": weekly_amount,
         "deposit_amount": deposit_amount,
         "start_km": start_km,
@@ -138,8 +130,9 @@ async def update_contract(
         "status": ContractStatus(status),
     })
     contracts = service.get_all()
-    return templates.TemplateResponse(request, "pages/contracts/table.html", {
+    return templates.TemplateResponse(request, "pages/contracts/list.html", {
         "contracts": [contract_to_dict(c) for c in contracts],
+        "current_path": "/contracts",
     })
 
 

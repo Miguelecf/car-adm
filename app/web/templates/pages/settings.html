@@ -5,11 +5,11 @@
 {% block content %}
 <div id="main-content" data-current-path="{{ current_path }}">
     <div class="mb-8">
-        <h2 class="text-4xl font-bold text-[#F5F0EB]">Ajustes</h2>
-        <p class="text-lg text-[#989898] mt-2">Configuración general</p>
+        <h2 class="page-title">Ajustes</h2>
+        <p class="page-subtitle">Configuración general</p>
     </div>
 
-    <div class="bg-[#141414] border border-[#262626] rounded-2xl p-8 max-w-xl">
+    <div class="form-card max-w-xl">
         {% if success %}
         <div class="bg-[#0F291E] border border-[#22C55E]/30 text-[#22C55E] px-5 py-4 rounded-xl mb-8 text-lg">
             ✅ Configuración guardada correctamente
@@ -19,8 +19,8 @@
         <form hx-post="/settings" hx-target="#main-content" hx-swap="innerHTML" hx-select="#main-content">
             <div class="space-y-6">
                 <div>
-                    <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Día de cobro semanal</label>
-                    <select name="payment_day" class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                    <label class="form-label">Día de cobro semanal</label>
+                    <select name="payment_day" class="form-control">
                         <option value="0" {% if payment_day == 0 %}selected{% endif %}>Domingo</option>
                         <option value="1" {% if payment_day == 1 %}selected{% endif %}>Lunes</option>
                         <option value="2" {% if payment_day == 2 %}selected{% endif %}>Martes</option>
@@ -29,13 +29,12 @@
                         <option value="5" {% if payment_day == 5 %}selected{% endif %}>Viernes</option>
                         <option value="6" {% if payment_day == 6 %}selected{% endif %}>Sábado</option>
                     </select>
-                    <p class="text-base text-[#5C5C5C] mt-2">Día en que se generan los cobros semanales automáticamente</p>
+                    <p class="form-help">Día en que se generan los cobros semanales automáticamente</p>
                 </div>
             </div>
 
             <div class="flex justify-end mt-8">
-                <button type="submit"
-                        class="px-8 py-3 bg-[#F5A623] hover:bg-[#E0950A] text-[#0A0A0A] text-lg font-bold rounded-xl transition-all duration-150">
+                <button type="submit" class="btn btn-primary px-8">
                     Guardar cambios
                 </button>
             </div>

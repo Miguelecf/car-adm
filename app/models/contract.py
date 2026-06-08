@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import enum
 from app.core.database import Base
+from app.models.soft_delete import SoftDeleteMixin
 
 
 class ContractStatus(str, enum.Enum):
@@ -10,7 +11,7 @@ class ContractStatus(str, enum.Enum):
     FINALIZADO = "finalizado"
 
 
-class Contract(Base):
+class Contract(SoftDeleteMixin, Base):
     __tablename__ = "contracts"
 
     id = Column(Integer, primary_key=True, index=True)

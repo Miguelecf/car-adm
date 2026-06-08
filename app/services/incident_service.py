@@ -13,6 +13,7 @@ class IncidentService:
         return (
             self.db.query(Incident)
             .join(Vehicle)
+            .filter(Incident.deleted_at.is_(None), Vehicle.deleted_at.is_(None))
             .order_by(Incident.date.desc())
             .all()
         )
@@ -20,7 +21,7 @@ class IncidentService:
     def get_by_vehicle(self, vehicle_id: int) -> list[Incident]:
         return (
             self.db.query(Incident)
-            .filter(Incident.vehicle_id == vehicle_id)
+            .filter(Incident.vehicle_id == vehicle_id, Incident.deleted_at.is_(None))
             .order_by(Incident.date.desc())
             .all()
         )
@@ -28,7 +29,7 @@ class IncidentService:
     def get_by_driver(self, driver_id: int) -> list[Incident]:
         return (
             self.db.query(Incident)
-            .filter(Incident.driver_id == driver_id)
+            .filter(Incident.driver_id == driver_id, Incident.deleted_at.is_(None))
             .order_by(Incident.date.desc())
             .all()
         )
@@ -36,13 +37,16 @@ class IncidentService:
     def get_pending(self) -> list[Incident]:
         return (
             self.db.query(Incident)
-            .filter(Incident.status == IncidentStatus.PENDIENTE)
+            .filter(Incident.status == IncidentStatus.PENDIENTE, Incident.deleted_at.is_(None))
             .order_by(Incident.date.desc())
             .all()
         )
 
-    def get_by_id(self, incident_id: int) -> Optional[Incident]:
-        return self.db.query(Incident).filter(Incident.id == incident_id).first()
+    def get_by_id(self, incident_id: int, include_deleted: bool = False) -> Optional[Incident]:
+        query = self.db.query(Incident).filter(Incident.id == incident_id)
+        if not include_deleted:
+            query = query.filter(Incident.deleted_at.is_(None))
+        return query.first()
 
     def create(self, data: dict) -> Incident:
         incident = Incident(**data)
@@ -74,9 +78,9 @@ class IncidentService:
         incident = self.get_by_id(incident_id)
         if not incident:
             return False
-        self.db.delete(incident)
+        incident.soft_delete(reason="Deleted from incidents UI")
         self.db.commit()
         return True
 
     def get_total_cost(self) -> int:
-        return sum(i.cost or 0 for i in self.db.query(Incident).all())
+        return sum(i.cost or 0 for i in self.db.query(Incident).filter(Incident.deleted_at.is_(None)).all())

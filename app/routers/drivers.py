@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models import Driver
 from app.services.driver_service import DriverService
+from app.utils.dates import parse_latam_date
 from app.web.templates import templates
 
 
@@ -18,7 +19,7 @@ def driver_to_dict(d: Driver) -> dict:
         "phone": d.phone or "",
         "address": d.address or "",
         "license_number": d.license_number or "",
-        "license_expiry": d.license_expiry.strftime("%Y-%m-%d") if d.license_expiry else "",
+        "license_expiry": d.license_expiry,
     }
 
 
@@ -52,12 +53,8 @@ async def create_driver(
     license_expiry: str = Form(""),
     db: Session = Depends(get_db),
 ):
-    from datetime import date
     service = DriverService(db)
-
-    license_expiry_date = None
-    if license_expiry:
-        license_expiry_date = date.fromisoformat(license_expiry)
+    license_expiry_date = parse_latam_date(license_expiry, "Vencimiento licencia", required=False)
 
     driver = service.create({
         "name": name,
@@ -68,8 +65,9 @@ async def create_driver(
         "license_expiry": license_expiry_date,
     })
     drivers = service.get_all()
-    return templates.TemplateResponse(request, "pages/drivers/table.html", {
+    return templates.TemplateResponse(request, "pages/drivers/list.html", {
         "drivers": [driver_to_dict(d) for d in drivers],
+        "current_path": "/drivers",
     })
 
 
@@ -98,12 +96,8 @@ async def update_driver(
     license_expiry: str = Form(""),
     db: Session = Depends(get_db),
 ):
-    from datetime import date
     service = DriverService(db)
-
-    license_expiry_date = None
-    if license_expiry:
-        license_expiry_date = date.fromisoformat(license_expiry)
+    license_expiry_date = parse_latam_date(license_expiry, "Vencimiento licencia", required=False)
 
     driver = service.update(driver_id, {
         "name": name,
@@ -114,8 +108,9 @@ async def update_driver(
         "license_expiry": license_expiry_date,
     })
     drivers = service.get_all()
-    return templates.TemplateResponse(request, "pages/drivers/table.html", {
+    return templates.TemplateResponse(request, "pages/drivers/list.html", {
         "drivers": [driver_to_dict(d) for d in drivers],
+        "current_path": "/drivers",
     })
 
 

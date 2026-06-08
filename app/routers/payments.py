@@ -5,6 +5,7 @@ from app.core.database import get_db
 from app.models import Payment, PaymentStatus, PaymentMethod
 from app.services.payment_service import PaymentService
 from app.services.contract_service import ContractService
+from app.utils.dates import parse_latam_date
 from app.web.templates import templates
 
 
@@ -16,8 +17,8 @@ def payment_to_dict(p: Payment) -> dict:
         "id": p.id,
         "contract_id": p.contract_id,
         "amount": p.amount,
-        "due_date": p.due_date.strftime("%Y-%m-%d") if p.due_date else "",
-        "payment_date": p.payment_date.strftime("%Y-%m-%d") if p.payment_date else "",
+        "due_date": p.due_date.strftime("%d/%m/%Y") if p.due_date else "",
+        "payment_date": p.payment_date.strftime("%d/%m/%Y") if p.payment_date else "",
         "method": p.method.value if p.method else "",
         "status": p.status.value if hasattr(p.status, 'value') else p.status,
         "notes": p.notes or "",
@@ -57,20 +58,20 @@ async def create_payment(
     notes: str = Form(""),
     db: Session = Depends(get_db),
 ):
-    from datetime import date
     service = PaymentService(db)
 
     payment = service.create({
         "contract_id": contract_id,
         "amount": amount,
-        "due_date": date.fromisoformat(due_date),
+        "due_date": parse_latam_date(due_date, "Fecha límite"),
         "method": PaymentMethod(method) if method else None,
         "notes": notes,
         "status": PaymentStatus.PENDIENTE,
     })
     payments = service.get_all()
-    return templates.TemplateResponse(request, "pages/payments/table.html", {
+    return templates.TemplateResponse(request, "pages/payments/list.html", {
         "payments": [payment_to_dict(p) for p in payments],
+        "current_path": "/payments",
     })
 
 
@@ -83,9 +84,8 @@ async def mark_payment_paid(
     notes: str = Form(""),
     db: Session = Depends(get_db),
 ):
-    from datetime import date
     service = PaymentService(db)
-    service.mark_paid(payment_id, date.fromisoformat(payment_date), PaymentMethod(method), notes)
+    service.mark_paid(payment_id, parse_latam_date(payment_date, "Fecha de pago"), PaymentMethod(method), notes)
     payments = service.get_all()
     return templates.TemplateResponse(request, "pages/payments/table.html", {
         "payments": [payment_to_dict(p) for p in payments],
@@ -97,7 +97,7 @@ async def pay_payment_form(request: Request, payment_id: int):
     from datetime import date
     return templates.TemplateResponse(request, "pages/payments/pay_form.html", {
         "payment_id": payment_id,
-        "today": date.today().isoformat(),
+        "today": date.today().strftime("%d/%m/%Y"),
         "current_path": "/payments",
     })
 

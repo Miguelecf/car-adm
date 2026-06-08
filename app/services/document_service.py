@@ -12,6 +12,7 @@ class DocumentService:
         return (
             self.db.query(Document)
             .join(Vehicle)
+            .filter(Document.deleted_at.is_(None), Vehicle.deleted_at.is_(None))
             .order_by(Document.expiry_date.asc())
             .all()
         )
@@ -19,13 +20,16 @@ class DocumentService:
     def get_by_vehicle(self, vehicle_id: int) -> list[Document]:
         return (
             self.db.query(Document)
-            .filter(Document.vehicle_id == vehicle_id)
+            .filter(Document.vehicle_id == vehicle_id, Document.deleted_at.is_(None))
             .order_by(Document.expiry_date.asc())
             .all()
         )
 
-    def get_by_id(self, document_id: int) -> Optional[Document]:
-        return self.db.query(Document).filter(Document.id == document_id).first()
+    def get_by_id(self, document_id: int, include_deleted: bool = False) -> Optional[Document]:
+        query = self.db.query(Document).filter(Document.id == document_id)
+        if not include_deleted:
+            query = query.filter(Document.deleted_at.is_(None))
+        return query.first()
 
     def create(self, data: dict) -> Document:
         document = Document(**data)
@@ -48,7 +52,7 @@ class DocumentService:
         document = self.get_by_id(document_id)
         if not document:
             return False
-        self.db.delete(document)
+        document.soft_delete(reason="Deleted from documents UI")
         self.db.commit()
         return True
 
@@ -59,6 +63,8 @@ class DocumentService:
             .join(Vehicle)
             .filter(
                 Document.expiry_date >= date.today(),
+                Document.deleted_at.is_(None),
+                Vehicle.deleted_at.is_(None),
                 Document.expiry_date <= cutoff
             )
             .order_by(Document.expiry_date.asc())
@@ -69,7 +75,7 @@ class DocumentService:
         return (
             self.db.query(Document)
             .join(Vehicle)
-            .filter(Document.expiry_date < date.today())
+            .filter(Document.expiry_date < date.today(), Document.deleted_at.is_(None), Vehicle.deleted_at.is_(None))
             .order_by(Document.expiry_date.asc())
             .all()
         )

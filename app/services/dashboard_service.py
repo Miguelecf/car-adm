@@ -14,10 +14,10 @@ class DashboardService:
         self.db = db
 
     def get_stats(self) -> dict:
-        vehicles = self.db.query(Vehicle).all()
+        vehicles = self.db.query(Vehicle).filter(Vehicle.deleted_at.is_(None)).all()
         active_contracts = (
             self.db.query(Contract)
-            .filter(Contract.status == ContractStatus.ACTIVO)
+            .filter(Contract.status == ContractStatus.ACTIVO, Contract.deleted_at.is_(None))
             .all()
         )
         payment_service = PaymentService(self.db)
@@ -26,7 +26,7 @@ class DashboardService:
 
         pending_incidents = (
             self.db.query(Incident)
-            .filter(Incident.status == IncidentStatus.PENDIENTE)
+            .filter(Incident.status == IncidentStatus.PENDIENTE, Incident.deleted_at.is_(None))
             .all()
         )
 
@@ -41,7 +41,7 @@ class DashboardService:
                 "out_of_service": len([v for v in vehicles if v.status == VehicleStatus.FUERA_SERVICIO]),
             },
             "contracts": {
-                "total": len(self.db.query(Contract).all()),
+                "total": len(self.db.query(Contract).filter(Contract.deleted_at.is_(None)).all()),
                 "active": len(active_contracts),
             },
             "weekly_revenue": total_revenue,
@@ -98,7 +98,7 @@ class DashboardService:
         return result[:5]
 
     def get_profitability(self) -> list[dict]:
-        vehicles = self.db.query(Vehicle).all()
+        vehicles = self.db.query(Vehicle).filter(Vehicle.deleted_at.is_(None)).all()
         result = []
 
         for v in vehicles:
@@ -107,27 +107,27 @@ class DashboardService:
 
             contracts = (
                 self.db.query(Contract)
-                .filter(Contract.vehicle_id == v.id, Contract.status == ContractStatus.ACTIVO)
+                .filter(Contract.vehicle_id == v.id, Contract.status == ContractStatus.ACTIVO, Contract.deleted_at.is_(None))
                 .all()
             )
             for c in contracts:
                 payments = (
                     self.db.query(Payment)
-                    .filter(Payment.contract_id == c.id, Payment.status == PaymentStatus.PAGADO)
+                    .filter(Payment.contract_id == c.id, Payment.status == PaymentStatus.PAGADO, Payment.deleted_at.is_(None))
                     .all()
                 )
                 total_revenue += sum(p.amount for p in payments)
 
             maintenances = (
                 self.db.query(Maintenance)
-                .filter(Maintenance.vehicle_id == v.id)
+                .filter(Maintenance.vehicle_id == v.id, Maintenance.deleted_at.is_(None))
                 .all()
             )
             total_expenses += sum(m.cost or 0 for m in maintenances)
 
             incidents = (
                 self.db.query(Incident)
-                .filter(Incident.vehicle_id == v.id)
+                .filter(Incident.vehicle_id == v.id, Incident.deleted_at.is_(None))
                 .all()
             )
             total_expenses += sum(i.cost or 0 for i in incidents)

@@ -5,57 +5,58 @@
                 hx-target="#main-content"
                 hx-swap="innerHTML"
                 hx-select="#main-content"
-                class="text-[#989898] hover:text-[#F5F0EB] text-lg mb-4 flex items-center gap-2 transition-colors duration-150">
+                class="page-back-link">
             <i class="fas fa-arrow-left"></i> Volver a Autos
         </button>
-        <h2 class="text-4xl font-bold text-[#F5F0EB]">{{ 'Editar' if vehicle else 'Nuevo' }} Auto</h2>
+        <h2 class="page-title">{{ 'Editar' if vehicle else 'Nuevo' }} Auto</h2>
     </div>
 
     <form hx-post="{{ action }}"
-          hx-target="#vehicles-table-container"
+          hx-target="#main-content"
           hx-swap="innerHTML"
-          class="bg-[#141414] border border-[#262626] rounded-2xl p-8 max-w-2xl">
+          hx-select="#main-content"
+          class="form-card max-w-2xl">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Marca <span class="text-[#F5A623]">*</span></label>
+                <label class="form-label">Marca <span class="text-[#F5A623]">*</span></label>
                 <input type="text" name="brand" required
                        value="{{ vehicle.brand if vehicle else '' }}"
-                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                       class="form-control">
             </div>
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Modelo <span class="text-[#F5A623]">*</span></label>
+                <label class="form-label">Modelo <span class="text-[#F5A623]">*</span></label>
                 <input type="text" name="model" required
                        value="{{ vehicle.model if vehicle else '' }}"
-                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                       class="form-control">
             </div>
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Año <span class="text-[#F5A623]">*</span></label>
-                <input type="number" name="year" required
+                <label class="form-label">Año <span class="text-[#F5A623]">*</span></label>
+                <input type="number" name="year" required min="0" max="{{ max_vehicle_year }}" class="form-control no-spinner"
                        value="{{ vehicle.year if vehicle else '' }}"
-                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                       >
             </div>
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Matrícula <span class="text-[#F5A623]">*</span></label>
+                <label class="form-label">Matrícula <span class="text-[#F5A623]">*</span></label>
                 <input type="text" name="plate" required
                        value="{{ vehicle.plate if vehicle else '' }}"
-                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                       class="form-control">
             </div>
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Color</label>
+                <label class="form-label">Color</label>
                 <input type="text" name="color"
                        value="{{ vehicle.color if vehicle else '' }}"
-                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                       class="form-control">
             </div>
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Km actuales</label>
-                <input type="number" name="current_km"
+                <label class="form-label">Km actuales</label>
+                <input type="number" name="current_km" min="0" class="form-control no-spinner"
                        value="{{ vehicle.current_km if vehicle else 0 }}"
-                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                       >
             </div>
             {% if vehicle %}
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Estado</label>
-                <select name="status" class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                <label class="form-label">Estado</label>
+                <select name="status" class="form-control">
                     <option value="activo" {% if vehicle.status == 'activo' %}selected{% endif %}>Activo</option>
                     <option value="en_taller" {% if vehicle.status == 'en_taller' %}selected{% endif %}>En taller</option>
                     <option value="fuera_servicio" {% if vehicle.status == 'fuera_servicio' %}selected{% endif %}>Fuera de servicio</option>
@@ -70,11 +71,10 @@
                     hx-target="#main-content"
                     hx-swap="innerHTML"
                     hx-select="#main-content"
-                    class="px-6 py-3 text-lg text-[#989898] hover:text-[#F5F0EB] hover:bg-[#1C1C1C] rounded-xl transition-all duration-150">
+                    class="btn btn-secondary px-6">
                 Cancelar
             </button>
-            <button type="submit"
-                    class="px-8 py-3 bg-[#F5A623] hover:bg-[#E0950A] text-[#0A0A0A] text-lg font-bold rounded-xl transition-all duration-150">
+            <button type="submit" class="btn btn-primary px-8">
                 Guardar
             </button>
         </div>

@@ -12,6 +12,7 @@ class MaintenanceService:
         return (
             self.db.query(Maintenance)
             .join(Vehicle)
+            .filter(Maintenance.deleted_at.is_(None), Vehicle.deleted_at.is_(None))
             .order_by(Maintenance.service_date.desc())
             .all()
         )
@@ -19,13 +20,16 @@ class MaintenanceService:
     def get_by_vehicle(self, vehicle_id: int) -> list[Maintenance]:
         return (
             self.db.query(Maintenance)
-            .filter(Maintenance.vehicle_id == vehicle_id)
+            .filter(Maintenance.vehicle_id == vehicle_id, Maintenance.deleted_at.is_(None))
             .order_by(Maintenance.service_date.desc())
             .all()
         )
 
-    def get_by_id(self, maintenance_id: int) -> Optional[Maintenance]:
-        return self.db.query(Maintenance).filter(Maintenance.id == maintenance_id).first()
+    def get_by_id(self, maintenance_id: int, include_deleted: bool = False) -> Optional[Maintenance]:
+        query = self.db.query(Maintenance).filter(Maintenance.id == maintenance_id)
+        if not include_deleted:
+            query = query.filter(Maintenance.deleted_at.is_(None))
+        return query.first()
 
     def create(self, data: dict) -> Maintenance:
         maintenance = Maintenance(**data)
@@ -48,7 +52,7 @@ class MaintenanceService:
         maintenance = self.get_by_id(maintenance_id)
         if not maintenance:
             return False
-        self.db.delete(maintenance)
+        maintenance.soft_delete(reason="Deleted from maintenance UI")
         self.db.commit()
         return True
 
@@ -64,6 +68,8 @@ class MaintenanceService:
             .join(Vehicle)
             .filter(
                 Maintenance.next_service_date != None,
+                Maintenance.deleted_at.is_(None),
+                Vehicle.deleted_at.is_(None),
                 Maintenance.next_service_date <= cutoff_date,
                 Maintenance.next_service_date >= date.today()
             )
@@ -76,6 +82,8 @@ class MaintenanceService:
             .join(Vehicle)
             .filter(
                 Maintenance.next_service_km != None,
+                Maintenance.deleted_at.is_(None),
+                Vehicle.deleted_at.is_(None),
                 Maintenance.next_service_km <= cutoff_km_high,
                 Maintenance.next_service_km > 0
             )
@@ -88,13 +96,13 @@ class MaintenanceService:
         return sorted(results, key=lambda x: (x.next_service_date or date.today() + timedelta(days=365)))
 
     def check_vehicle_needs_service(self, vehicle_id: int) -> dict:
-        vehicle = self.db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
+        vehicle = self.db.query(Vehicle).filter(Vehicle.id == vehicle_id, Vehicle.deleted_at.is_(None)).first()
         if not vehicle:
             return {"needs_service": False}
 
         last = (
             self.db.query(Maintenance)
-            .filter(Maintenance.vehicle_id == vehicle_id)
+            .filter(Maintenance.vehicle_id == vehicle_id, Maintenance.deleted_at.is_(None))
             .order_by(Maintenance.service_date.desc())
             .first()
         )

@@ -1,8 +1,9 @@
 from sqlalchemy import Column, Integer, String, Date
 from app.core.database import Base
+from app.models.soft_delete import SoftDeleteMixin
 
 
-class Driver(Base):
+class Driver(SoftDeleteMixin, Base):
     __tablename__ = "drivers"
 
     id = Column(Integer, primary_key=True, index=True)

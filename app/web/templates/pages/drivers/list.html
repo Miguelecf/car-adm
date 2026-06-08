@@ -6,19 +6,19 @@
 <div id="main-content" data-current-path="{{ current_path }}">
     <div class="flex justify-between items-center mb-8">
         <div>
-            <h2 class="text-4xl font-bold text-[#F5F0EB]">Choferes</h2>
-            <p class="text-lg text-[#989898] mt-2">Personas que manejan tus autos</p>
+            <h2 class="page-title">Choferes</h2>
+            <p class="page-subtitle">Personas que manejan tus autos</p>
         </div>
         <button hx-get="/drivers/new"
                 hx-target="#main-content"
                 hx-swap="innerHTML"
                 hx-select="#main-content"
-                class="bg-[#F5A623] hover:bg-[#E0950A] text-[#0A0A0A] px-6 py-3 rounded-xl text-lg font-bold transition-all duration-150 flex items-center gap-2">
+                class="btn btn-primary px-6">
             <i class="fas fa-plus"></i> Nuevo chofer
         </button>
     </div>
 
-    <div class="bg-[#141414] border border-[#262626] rounded-2xl overflow-hidden">
+    <div class="table-shell">
         <div id="drivers-table-container">
             {% include "pages/drivers/table.html" %}
         </div>

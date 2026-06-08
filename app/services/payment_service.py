@@ -14,6 +14,7 @@ class PaymentService:
         return (
             self.db.query(Payment)
             .join(Contract)
+            .filter(Payment.deleted_at.is_(None), Contract.deleted_at.is_(None))
             .order_by(Payment.due_date.desc())
             .all()
         )
@@ -22,7 +23,7 @@ class PaymentService:
         return (
             self.db.query(Payment)
             .join(Contract)
-            .filter(Payment.status == PaymentStatus.PENDIENTE)
+            .filter(Payment.status == PaymentStatus.PENDIENTE, Payment.deleted_at.is_(None), Contract.deleted_at.is_(None))
             .order_by(Payment.due_date.asc())
             .all()
         )
@@ -33,14 +34,19 @@ class PaymentService:
             .join(Contract)
             .filter(
                 Payment.status.in_([PaymentStatus.PENDIENTE, PaymentStatus.ATRASADO]),
+                Payment.deleted_at.is_(None),
+                Contract.deleted_at.is_(None),
                 Payment.due_date < date.today()
             )
             .order_by(Payment.due_date.asc())
             .all()
         )
 
-    def get_by_id(self, payment_id: int) -> Optional[Payment]:
-        return self.db.query(Payment).filter(Payment.id == payment_id).first()
+    def get_by_id(self, payment_id: int, include_deleted: bool = False) -> Optional[Payment]:
+        query = self.db.query(Payment).filter(Payment.id == payment_id)
+        if not include_deleted:
+            query = query.filter(Payment.deleted_at.is_(None))
+        return query.first()
 
     def create(self, data: dict) -> Payment:
         payment = Payment(**data)
@@ -76,7 +82,7 @@ class PaymentService:
         payment = self.get_by_id(payment_id)
         if not payment:
             return False
-        self.db.delete(payment)
+        payment.soft_delete(reason="Deleted from payments UI")
         self.db.commit()
         return True
 
@@ -87,6 +93,7 @@ class PaymentService:
             self.db.query(Payment)
             .filter(
                 Payment.status == PaymentStatus.PAGADO,
+                Payment.deleted_at.is_(None),
                 Payment.payment_date >= start_of_week,
                 Payment.payment_date <= today
             )
@@ -109,6 +116,7 @@ class PaymentService:
                 self.db.query(Payment)
                 .filter(
                     Payment.contract_id == contract.id,
+                    Payment.deleted_at.is_(None),
                     Payment.due_date >= date.today()
                 )
                 .first()

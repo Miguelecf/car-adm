@@ -1,36 +1,36 @@
-<table class="w-full">
-    <thead class="bg-[#1C1C1C] border-b border-[#262626]">
+<table class="table-base">
+    <thead class="table-head">
         <tr>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Auto</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Tipo</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Fecha emisión</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Fecha vencimiento</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Estado</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Acciones</th>
+            <th class="table-head-cell">Auto</th>
+            <th class="table-head-cell">Tipo</th>
+            <th class="table-head-cell">Fecha emisión</th>
+            <th class="table-head-cell">Fecha vencimiento</th>
+            <th class="table-head-cell">Estado</th>
+            <th class="table-head-cell">Acciones</th>
         </tr>
     </thead>
     <tbody class="divide-y divide-[#262626]">
         {% for doc in documents %}
-        <tr class="hover:bg-[#1C1C1C] transition-colors duration-150">
-            <td class="px-5 py-4 text-lg font-bold text-[#F5F0EB]">{{ doc.vehicle_plate }}</td>
-            <td class="px-5 py-4 text-lg text-[#989898]">{{ doc.type }}</td>
-            <td class="px-5 py-4 text-lg text-[#989898]">{{ doc.issue_date }}</td>
-            <td class="px-5 py-4 text-lg text-[#989898]">{{ doc.expiry_date }}</td>
-            <td class="px-5 py-4">
-                {% if doc.type|lower == 'vencido' or 'vencido' in doc.status|lower %}
-                <span class="px-4 py-1.5 text-base rounded-full font-medium bg-[#3B1219] text-[#EF4444]">Vencido</span>
-                {% elif 'próximo' in doc.status|lower %}
-                <span class="px-4 py-1.5 text-base rounded-full font-medium bg-[#3D2E0A] text-[#F5A623]">Por vencer</span>
+        <tr class="table-row">
+            <td class="table-cell-strong">{{ doc.vehicle_plate }}</td>
+            <td class="table-cell">{{ doc.type }}</td>
+            <td class="table-cell">{{ doc.issue_date }}</td>
+            <td class="table-cell">{{ doc.expiry_date }}</td>
+            <td class="table-cell">
+                {% if doc.status == 'vencido' %}
+                <span class="status-badge status-danger">Vencido</span>
+                {% elif doc.status == 'proximo_a_vencer' %}
+                <span class="status-badge status-warning">Por vencer</span>
                 {% else %}
-                <span class="px-4 py-1.5 text-base rounded-full font-medium bg-[#0F291E] text-[#22C55E]">Vigente</span>
+                <span class="status-badge status-success">Vigente</span>
                 {% endif %}
             </td>
-            <td class="px-5 py-4">
+            <td class="table-cell">
                 <button hx-delete="/documents/{{ doc.id }}"
                         hx-target="#documents-table-container"
                         hx-swap="innerHTML"
                         hx-confirm="¿Eliminar este documento?"
-                        class="text-[#989898] hover:text-[#EF4444] transition-colors duration-150 text-xl"
+                        class="icon-action icon-action-danger"
                         title="Eliminar">
                     <i class="fas fa-trash"></i>
                 </button>
@@ -45,7 +45,7 @@
                         hx-target="#main-content"
                         hx-swap="innerHTML"
                         hx-select="#main-content"
-                        class="mt-4 text-[#F5A623] hover:text-[#E0950A] text-lg font-medium transition-colors duration-150">
+                        class="empty-state-link">
                     Agregar el primero →
                 </button>
             </td>

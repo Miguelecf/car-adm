@@ -5,20 +5,21 @@
                 hx-target="#main-content"
                 hx-swap="innerHTML"
                 hx-select="#main-content"
-                class="text-[#989898] hover:text-[#F5F0EB] text-lg mb-4 flex items-center gap-2 transition-colors duration-150">
+                class="page-back-link">
             <i class="fas fa-arrow-left"></i> Volver a Multas
         </button>
-        <h2 class="text-4xl font-bold text-[#F5F0EB]">Nuevo Incidente</h2>
+        <h2 class="page-title">Nuevo Incidente</h2>
     </div>
 
     <form hx-post="{{ action }}"
-          hx-target="#incidents-table-container"
+          hx-target="#main-content"
           hx-swap="innerHTML"
-          class="bg-[#141414] border border-[#262626] rounded-2xl p-8 max-w-2xl">
+          hx-select="#main-content"
+          class="form-card max-w-2xl">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Auto <span class="text-[#F5A623]">*</span></label>
-                <select name="vehicle_id" required class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                <label class="form-label">Auto <span class="text-[#F5A623]">*</span></label>
+                <select name="vehicle_id" required class="form-control">
                     <option value="">Seleccionar...</option>
                     {% for v in vehicles %}
                     <option value="{{ v.id }}">{{ v.plate }} - {{ v.brand }} {{ v.model }}</option>
@@ -26,8 +27,8 @@
                 </select>
             </div>
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Chofer</label>
-                <select name="driver_id" class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                <label class="form-label">Chofer</label>
+                <select name="driver_id" class="form-control">
                     <option value="">Sin asignar</option>
                     {% for d in drivers %}
                     <option value="{{ d.id }}">{{ d.name }} ({{ d.dni }})</option>
@@ -35,8 +36,8 @@
                 </select>
             </div>
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Tipo <span class="text-[#F5A623]">*</span></label>
-                <select name="type" required class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                <label class="form-label">Tipo <span class="text-[#F5A623]">*</span></label>
+                <select name="type" required class="form-control">
                     <option value="">Seleccionar...</option>
                     <option value="multa">Multa</option>
                     <option value="accidente">Accidente</option>
@@ -44,19 +45,19 @@
                 </select>
             </div>
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Fecha <span class="text-[#F5A623]">*</span></label>
-                <input type="date" name="date" required
-                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                <label class="form-label">Fecha <span class="text-[#F5A623]">*</span></label>
+                <input type="text" name="date" required placeholder="dd/mm/yyyy"
+                       class="form-control datepicker">
             </div>
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Costo</label>
+                <label class="form-label">Costo</label>
                 <input type="number" name="cost" value="0"
-                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                       class="form-control no-spinner">
             </div>
             <div class="md:col-span-2">
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Descripción</label>
+                <label class="form-label">Descripción</label>
                 <textarea name="description" rows="3"
-                          class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150"></textarea>
+                          class="form-control"></textarea>
             </div>
         </div>
 
@@ -66,11 +67,10 @@
                     hx-target="#main-content"
                     hx-swap="innerHTML"
                     hx-select="#main-content"
-                    class="px-6 py-3 text-lg text-[#989898] hover:text-[#F5F0EB] hover:bg-[#1C1C1C] rounded-xl transition-all duration-150">
+                    class="btn btn-secondary px-6">
                 Cancelar
             </button>
-            <button type="submit"
-                    class="px-8 py-3 bg-[#F5A623] hover:bg-[#E0950A] text-[#0A0A0A] text-lg font-bold rounded-xl transition-all duration-150">
+            <button type="submit" class="btn btn-primary px-8">
                 Guardar
             </button>
         </div>

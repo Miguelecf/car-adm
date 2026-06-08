@@ -1,7 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
-from app.core.database import engine, Base
+from app.core.database import engine, Base, ensure_soft_delete_columns
 from app.core.config import settings
+from app.utils.dates import InvalidDateInput
 import app.models as models
 
 from app.routers.dashboard import router as dashboard_router
@@ -17,6 +18,19 @@ from app.routers.settings import router as settings_router
 
 def create_app() -> FastAPI:
     app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG)
+
+    @app.exception_handler(InvalidDateInput)
+    async def invalid_date_handler(request: Request, exc: InvalidDateInput):
+        return HTMLResponse(
+            f"""
+            <div class=\"max-w-2xl rounded-2xl border border-[#F5A623]/30 bg-[#141414] p-8 text-[#F5F0EB]\">
+                <h2 class=\"text-3xl font-bold text-[#F5A623]\">Fecha inválida</h2>
+                <p class=\"mt-3 text-lg text-[#F5F0EB]\">Revisá el dato ingresado y usá el formato <strong>dd/mm/yyyy</strong>.</p>
+                <p class=\"mt-3 text-base text-[#989898]\">{exc}</p>
+            </div>
+            """,
+            status_code=400,
+        )
 
     app.include_router(dashboard_router)
     app.include_router(vehicles_router, tags=["vehicles"])
@@ -34,12 +48,7 @@ def create_app() -> FastAPI:
 app = create_app()
 
 
-@app.get("/", response_class=HTMLResponse)
-async def root():
-    from app.web.templates import templates
-    return templates.TemplateResponse("pages/dashboard.html", {"request": {}})
-
-
 @app.on_event("startup")
 def on_startup():
     Base.metadata.create_all(bind=engine)
+    ensure_soft_delete_columns()

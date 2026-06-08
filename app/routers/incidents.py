@@ -6,6 +6,7 @@ from app.models import Incident, IncidentType, IncidentStatus
 from app.services.incident_service import IncidentService
 from app.services.vehicle_service import VehicleService
 from app.services.driver_service import DriverService
+from app.utils.dates import parse_latam_date
 from app.web.templates import templates
 
 
@@ -21,7 +22,7 @@ def incident_to_dict(i: Incident) -> dict:
         "driver_name": i.driver.name if i.driver else "",
         "type": i.type.value if hasattr(i.type, 'value') else i.type,
         "description": i.description or "",
-        "date": i.date.strftime("%Y-%m-%d") if i.date else "",
+        "date": i.date.strftime("%d/%m/%Y") if i.date else "",
         "cost": i.cost,
         "status": i.status.value if hasattr(i.status, 'value') else i.status,
     }
@@ -61,7 +62,6 @@ async def create_incident(
     cost: int = Form(0),
     db: Session = Depends(get_db),
 ):
-    from datetime import date as date_type
     service = IncidentService(db)
 
     incident = service.create({
@@ -69,13 +69,14 @@ async def create_incident(
         "driver_id": driver_id if driver_id else None,
         "type": IncidentType(type),
         "description": description,
-        "date": date_type.fromisoformat(date),
+        "date": parse_latam_date(date, "Fecha"),
         "cost": cost,
         "status": IncidentStatus.PENDIENTE,
     })
     incidents = service.get_all()
-    return templates.TemplateResponse(request, "pages/incidents/table.html", {
+    return templates.TemplateResponse(request, "pages/incidents/list.html", {
         "incidents": [incident_to_dict(i) for i in incidents],
+        "current_path": "/incidents",
     })
 
 

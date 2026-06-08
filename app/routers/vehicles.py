@@ -38,10 +38,12 @@ async def list_vehicles(request: Request, db: Session = Depends(get_db)):
 
 @router.get("/vehicles/new", response_class=HTMLResponse)
 async def new_vehicle_form(request: Request):
+    max_vehicle_year = date.today().year + 1
     return templates.TemplateResponse(request, "pages/vehicles/form.html", {
         "vehicle": None,
         "action": "/vehicles",
         "current_path": "/vehicles",
+        "max_vehicle_year": max_vehicle_year,
     })
 
 
@@ -56,6 +58,15 @@ async def create_vehicle(
     current_km: int = Form(0),
     db: Session = Depends(get_db),
 ):
+    # Defensive server-side validation: HTML constraints can be bypassed.
+    max_vehicle_year = date.today().year + 1
+    if year < 0:
+        year = 0
+    if year > max_vehicle_year:
+        year = max_vehicle_year
+    if current_km < 0:
+        current_km = 0
+
     service = VehicleService(db)
     vehicle = service.create({
         "brand": brand,
@@ -67,8 +78,9 @@ async def create_vehicle(
         "status": VehicleStatus.ACTIVO,
     })
     vehicles = service.get_all()
-    return templates.TemplateResponse(request, "pages/vehicles/table.html", {
+    return templates.TemplateResponse(request, "pages/vehicles/list.html", {
         "vehicles": [vehicle_to_dict(v) for v in vehicles],
+        "current_path": "/vehicles",
     })
 
 
@@ -78,10 +90,12 @@ async def edit_vehicle_form(request: Request, vehicle_id: int, db: Session = Dep
     vehicle = service.get_by_id(vehicle_id)
     if not vehicle:
         return HTMLResponse("No encontrado", status_code=404)
+    max_vehicle_year = date.today().year + 1
     return templates.TemplateResponse(request, "pages/vehicles/form.html", {
         "vehicle": vehicle_to_dict(vehicle),
         "action": f"/vehicles/{vehicle_id}",
         "current_path": "/vehicles",
+        "max_vehicle_year": max_vehicle_year,
     })
 
 
@@ -98,6 +112,15 @@ async def update_vehicle(
     status: str = Form("activo"),
     db: Session = Depends(get_db),
 ):
+    # Defensive server-side validation: HTML constraints can be bypassed.
+    max_vehicle_year = date.today().year + 1
+    if year < 0:
+        year = 0
+    if year > max_vehicle_year:
+        year = max_vehicle_year
+    if current_km < 0:
+        current_km = 0
+
     service = VehicleService(db)
     vehicle = service.update(vehicle_id, {
         "brand": brand,
@@ -109,8 +132,9 @@ async def update_vehicle(
         "status": VehicleStatus(status),
     })
     vehicles = service.get_all()
-    return templates.TemplateResponse(request, "pages/vehicles/table.html", {
+    return templates.TemplateResponse(request, "pages/vehicles/list.html", {
         "vehicles": [vehicle_to_dict(v) for v in vehicles],
+        "current_path": "/vehicles",
     })
 
 
@@ -119,6 +143,7 @@ async def delete_vehicle(request: Request, vehicle_id: int, db: Session = Depend
     service = VehicleService(db)
     service.delete(vehicle_id)
     vehicles = service.get_all()
-    return templates.TemplateResponse(request, "pages/vehicles/table.html", {
+    return templates.TemplateResponse(request, "pages/vehicles/list.html", {
         "vehicles": [vehicle_to_dict(v) for v in vehicles],
+        "current_path": "/vehicles",
     })

@@ -1,46 +1,46 @@
-<table class="w-full">
-    <thead class="bg-[#1C1C1C] border-b border-[#262626]">
+<table class="table-base">
+    <thead class="table-head">
         <tr>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Fecha</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Auto</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Chofer</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Tipo</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Descripción</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Costo</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Estado</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Acciones</th>
+            <th class="table-head-cell">Fecha</th>
+            <th class="table-head-cell">Auto</th>
+            <th class="table-head-cell">Chofer</th>
+            <th class="table-head-cell">Tipo</th>
+            <th class="table-head-cell">Descripción</th>
+            <th class="table-head-cell">Costo</th>
+            <th class="table-head-cell">Estado</th>
+            <th class="table-head-cell">Acciones</th>
         </tr>
     </thead>
     <tbody class="divide-y divide-[#262626]">
         {% for i in incidents %}
-        <tr class="hover:bg-[#1C1C1C] transition-colors duration-150">
-            <td class="px-5 py-4 text-lg text-[#989898]">{{ i.date }}</td>
-            <td class="px-5 py-4 text-lg font-bold text-[#F5F0EB]">{{ i.vehicle_plate }}</td>
-            <td class="px-5 py-4 text-lg text-[#989898]">{{ i.driver_name or '-' }}</td>
-            <td class="px-5 py-4">
+        <tr class="table-row">
+            <td class="table-cell">{{ i.date }}</td>
+            <td class="table-cell-strong">{{ i.vehicle_plate }}</td>
+            <td class="table-cell">{{ i.driver_name or '-' }}</td>
+            <td class="table-cell">
                 {% if i.type == 'multa' %}
-                <span class="px-4 py-1.5 text-base rounded-full font-medium bg-[#3B1219] text-[#EF4444]">Multa</span>
+                <span class="status-badge status-danger">Multa</span>
                 {% elif i.type == 'accidente' %}
-                <span class="px-4 py-1.5 text-base rounded-full font-medium bg-[#3D2E0A] text-[#F59E0B]">Accidente</span>
+                <span class="status-badge status-amber">Accidente</span>
                 {% else %}
-                <span class="px-4 py-1.5 text-base rounded-full font-medium bg-[#0A1E3B] text-[#3B82F6]">Reclamo</span>
+                <span class="status-badge status-info">Reclamo</span>
                 {% endif %}
             </td>
-            <td class="px-5 py-4 text-lg text-[#989898] max-w-xs truncate">{{ i.description or '-' }}</td>
-            <td class="px-5 py-4 text-lg text-[#989898]">${{ i.cost or 0 }}</td>
-            <td class="px-5 py-4">
+            <td class="table-cell max-w-xs truncate">{{ i.description or '-' }}</td>
+            <td class="table-cell">${{ i.cost or 0 }}</td>
+            <td class="table-cell">
                 {% if i.status == 'resuelto' %}
-                <span class="px-4 py-1.5 text-base rounded-full font-medium bg-[#0F291E] text-[#22C55E]">Resuelto</span>
+                <span class="status-badge status-success">Resuelto</span>
                 {% else %}
-                <span class="px-4 py-1.5 text-base rounded-full font-medium bg-[#3D2E0A] text-[#F5A623]">Pendiente</span>
+                <span class="status-badge status-warning">Pendiente</span>
                 {% endif %}
             </td>
-            <td class="px-5 py-4">
+            <td class="table-cell">
                 {% if i.status != 'resuelto' %}
                 <button hx-post="/incidents/{{ i.id }}/resolve"
                         hx-target="#incidents-table-container"
                         hx-swap="innerHTML"
-                        class="text-[#989898] hover:text-[#22C55E] mr-4 transition-colors duration-150 text-xl"
+                        class="icon-action icon-action-success mr-4"
                         title="Marcar resuelto">
                     <i class="fas fa-check"></i>
                 </button>
@@ -49,7 +49,7 @@
                         hx-target="#incidents-table-container"
                         hx-swap="innerHTML"
                         hx-confirm="¿Eliminar este incidente?"
-                        class="text-[#989898] hover:text-[#EF4444] transition-colors duration-150 text-xl"
+                        class="icon-action icon-action-danger"
                         title="Eliminar">
                     <i class="fas fa-trash"></i>
                 </button>
@@ -64,7 +64,7 @@
                         hx-target="#main-content"
                         hx-swap="innerHTML"
                         hx-select="#main-content"
-                        class="mt-4 text-[#F5A623] hover:text-[#E0950A] text-lg font-medium transition-colors duration-150">
+                        class="empty-state-link">
                     Agregar el primero →
                 </button>
             </td>

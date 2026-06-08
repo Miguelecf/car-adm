@@ -9,10 +9,13 @@ class VehicleService:
         self.db = db
 
     def get_all(self) -> list[Vehicle]:
-        return self.db.query(Vehicle).order_by(Vehicle.id.desc()).all()
+        return self.db.query(Vehicle).filter(Vehicle.deleted_at.is_(None)).order_by(Vehicle.id.desc()).all()
 
-    def get_by_id(self, vehicle_id: int) -> Optional[Vehicle]:
-        return self.db.query(Vehicle).filter(Vehicle.id == vehicle_id).first()
+    def get_by_id(self, vehicle_id: int, include_deleted: bool = False) -> Optional[Vehicle]:
+        query = self.db.query(Vehicle).filter(Vehicle.id == vehicle_id)
+        if not include_deleted:
+            query = query.filter(Vehicle.deleted_at.is_(None))
+        return query.first()
 
     def create(self, data: dict) -> Vehicle:
         vehicle = Vehicle(**data)
@@ -35,7 +38,7 @@ class VehicleService:
         vehicle = self.get_by_id(vehicle_id)
         if not vehicle:
             return False
-        self.db.delete(vehicle)
+        vehicle.soft_delete(reason="Deleted from vehicles UI")
         self.db.commit()
         return True
 

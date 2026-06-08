@@ -5,20 +5,21 @@
                 hx-target="#main-content"
                 hx-swap="innerHTML"
                 hx-select="#main-content"
-                class="text-[#989898] hover:text-[#F5F0EB] text-lg mb-4 flex items-center gap-2 transition-colors duration-150">
+                class="page-back-link">
             <i class="fas fa-arrow-left"></i> Volver a Contratos
         </button>
-        <h2 class="text-4xl font-bold text-[#F5F0EB]">{{ 'Editar' if contract else 'Nuevo' }} Contrato</h2>
+        <h2 class="page-title">{{ 'Editar' if contract else 'Nuevo' }} Contrato</h2>
     </div>
 
     <form hx-post="{{ action }}"
-          hx-target="#contracts-table-container"
+          hx-target="#main-content"
           hx-swap="innerHTML"
-          class="bg-[#141414] border border-[#262626] rounded-2xl p-8 max-w-2xl">
+          hx-select="#main-content"
+          class="form-card max-w-2xl">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Auto <span class="text-[#F5A623]">*</span></label>
-                <select name="vehicle_id" required class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                <label class="form-label">Auto <span class="text-[#F5A623]">*</span></label>
+                <select name="vehicle_id" required class="form-control">
                     <option value="">Seleccionar...</option>
                     {% for v in vehicles %}
                     <option value="{{ v.id }}" {% if contract and contract.vehicle_id == v.id %}selected{% endif %}>
@@ -28,8 +29,8 @@
                 </select>
             </div>
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Chofer <span class="text-[#F5A623]">*</span></label>
-                <select name="driver_id" required class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                <label class="form-label">Chofer <span class="text-[#F5A623]">*</span></label>
+                <select name="driver_id" required class="form-control">
                     <option value="">Seleccionar...</option>
                     {% for d in drivers %}
                     <option value="{{ d.id }}" {% if contract and contract.driver_id == d.id %}selected{% endif %}>
@@ -39,45 +40,45 @@
                 </select>
             </div>
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Fecha inicio <span class="text-[#F5A623]">*</span></label>
-                <input type="date" name="start_date" required
-                       value="{{ contract.start_date if contract else '' }}"
-                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                <label class="form-label">Fecha inicio <span class="text-[#F5A623]">*</span></label>
+                <input type="text" name="start_date" required placeholder="dd/mm/yyyy"
+                       value="{{ (contract.start_date | format_date_latam) if contract else '' }}"
+                       class="form-control datepicker">
             </div>
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Fecha fin</label>
-                <input type="date" name="end_date"
-                       value="{{ contract.end_date if contract else '' }}"
-                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                <label class="form-label">Fecha fin</label>
+                <input type="text" name="end_date" placeholder="dd/mm/yyyy"
+                       value="{{ (contract.end_date | format_date_latam) if contract else '' }}"
+                       class="form-control datepicker">
             </div>
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Km al inicio <span class="text-[#F5A623]">*</span></label>
+                <label class="form-label">Km al inicio <span class="text-[#F5A623]">*</span></label>
                 <input type="number" name="start_km" required
                        value="{{ contract.start_km if contract else '' }}"
-                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                       class="form-control no-spinner">
             </div>
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Km al fin</label>
+                <label class="form-label">Km al fin</label>
                 <input type="number" name="end_km"
                        value="{{ contract.end_km if contract else '' }}"
-                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                       class="form-control no-spinner">
             </div>
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Monto semanal <span class="text-[#F5A623]">*</span></label>
+                <label class="form-label">Monto semanal <span class="text-[#F5A623]">*</span></label>
                 <input type="number" name="weekly_amount" required
                        value="{{ contract.weekly_amount if contract else '' }}"
-                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                       class="form-control no-spinner">
             </div>
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Depósito</label>
+                <label class="form-label">Depósito</label>
                 <input type="number" name="deposit_amount"
                        value="{{ contract.deposit_amount if contract else 0 }}"
-                       class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] placeholder-[#5C5C5C] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                       class="form-control no-spinner">
             </div>
             {% if contract %}
             <div>
-                <label class="block text-lg font-medium text-[#F5F0EB] mb-2">Estado</label>
-                <select name="status" class="w-full px-4 py-3 bg-[#0A0A0A] border border-[#262626] rounded-xl text-lg text-[#F5F0EB] focus:border-[#F5A623] focus:ring-1 focus:ring-[#F5A623] focus:outline-none transition-colors duration-150">
+                <label class="form-label">Estado</label>
+                <select name="status" class="form-control">
                     <option value="activo" {% if contract.status == 'activo' %}selected{% endif %}>Activo</option>
                     <option value="finalizado" {% if contract.status == 'finalizado' %}selected{% endif %}>Finalizado</option>
                 </select>
@@ -91,11 +92,10 @@
                     hx-target="#main-content"
                     hx-swap="innerHTML"
                     hx-select="#main-content"
-                    class="px-6 py-3 text-lg text-[#989898] hover:text-[#F5F0EB] hover:bg-[#1C1C1C] rounded-xl transition-all duration-150">
+                    class="btn btn-secondary px-6">
                 Cancelar
             </button>
-            <button type="submit"
-                    class="px-8 py-3 bg-[#F5A623] hover:bg-[#E0950A] text-[#0A0A0A] text-lg font-bold rounded-xl transition-all duration-150">
+            <button type="submit" class="btn btn-primary px-8">
                 Guardar
             </button>
         </div>

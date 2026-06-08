@@ -8,13 +8,16 @@ class DriverService:
         self.db = db
 
     def get_all(self) -> list[Driver]:
-        return self.db.query(Driver).order_by(Driver.id.desc()).all()
+        return self.db.query(Driver).filter(Driver.deleted_at.is_(None)).order_by(Driver.id.desc()).all()
 
-    def get_by_id(self, driver_id: int) -> Optional[Driver]:
-        return self.db.query(Driver).filter(Driver.id == driver_id).first()
+    def get_by_id(self, driver_id: int, include_deleted: bool = False) -> Optional[Driver]:
+        query = self.db.query(Driver).filter(Driver.id == driver_id)
+        if not include_deleted:
+            query = query.filter(Driver.deleted_at.is_(None))
+        return query.first()
 
     def get_by_dni(self, dni: str) -> Optional[Driver]:
-        return self.db.query(Driver).filter(Driver.dni == dni).first()
+        return self.db.query(Driver).filter(Driver.dni == dni, Driver.deleted_at.is_(None)).first()
 
     def create(self, data: dict) -> Driver:
         driver = Driver(**data)
@@ -37,6 +40,6 @@ class DriverService:
         driver = self.get_by_id(driver_id)
         if not driver:
             return False
-        self.db.delete(driver)
+        driver.soft_delete(reason="Deleted from drivers UI")
         self.db.commit()
         return True

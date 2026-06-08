@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import enum
 from app.core.database import Base
+from app.models.soft_delete import SoftDeleteMixin
 
 
 class DocumentType(str, enum.Enum):
@@ -17,7 +18,7 @@ class DocumentStatus(str, enum.Enum):
     PROXIMO_VENCER = "proximo_a_vencer"
 
 
-class Document(Base):
+class Document(SoftDeleteMixin, Base):
     __tablename__ = "documents"
 
     id = Column(Integer, primary_key=True, index=True)

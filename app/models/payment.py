@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, Date, Enum, Text
 from sqlalchemy.orm import relationship
 import enum
 from app.core.database import Base
+from app.models.soft_delete import SoftDeleteMixin
 
 
 class PaymentMethod(str, enum.Enum):
@@ -15,7 +16,7 @@ class PaymentStatus(str, enum.Enum):
     ATRASADO = "atrasado"
 
 
-class Payment(Base):
+class Payment(SoftDeleteMixin, Base):
     __tablename__ = "payments"
 
     id = Column(Integer, primary_key=True, index=True)

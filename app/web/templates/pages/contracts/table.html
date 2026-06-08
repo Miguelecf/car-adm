@@ -1,38 +1,38 @@
-<table class="w-full">
-    <thead class="bg-[#1C1C1C] border-b border-[#262626]">
+<table class="table-base">
+    <thead class="table-head">
         <tr>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Auto</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Chofer</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Inicio</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Km Inicio</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Monto sem.</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Depósito</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Estado</th>
-            <th class="px-5 py-4 text-left text-base font-semibold text-[#989898]">Acciones</th>
+            <th class="table-head-cell">Auto</th>
+            <th class="table-head-cell">Chofer</th>
+            <th class="table-head-cell">Inicio</th>
+            <th class="table-head-cell">Km Inicio</th>
+            <th class="table-head-cell">Monto sem.</th>
+            <th class="table-head-cell">Depósito</th>
+            <th class="table-head-cell">Estado</th>
+            <th class="table-head-cell">Acciones</th>
         </tr>
     </thead>
     <tbody class="divide-y divide-[#262626]">
         {% for contract in contracts %}
-        <tr class="hover:bg-[#1C1C1C] transition-colors duration-150">
-            <td class="px-5 py-4 text-lg font-bold text-[#F5F0EB]">{{ contract.vehicle_plate }}</td>
-            <td class="px-5 py-4 text-lg text-[#989898]">{{ contract.driver_name }}</td>
-            <td class="px-5 py-4 text-lg text-[#989898]">{{ contract.start_date }}</td>
-            <td class="px-5 py-4 text-lg text-[#989898]">{{ contract.start_km }}</td>
-            <td class="px-5 py-4 text-lg font-bold text-[#F5F0EB]">${{ contract.weekly_amount }}</td>
-            <td class="px-5 py-4 text-lg text-[#989898]">${{ contract.deposit_amount or 0 }}</td>
-            <td class="px-5 py-4">
+        <tr class="table-row">
+            <td class="table-cell-strong">{{ contract.vehicle_plate }}</td>
+            <td class="table-cell">{{ contract.driver_name }}</td>
+            <td class="table-cell">{{ contract.start_date | format_date_latam }}</td>
+            <td class="table-cell">{{ contract.start_km }}</td>
+            <td class="table-cell-strong">${{ contract.weekly_amount }}</td>
+            <td class="table-cell">${{ contract.deposit_amount or 0 }}</td>
+            <td class="table-cell">
                 {% if contract.status == 'activo' %}
-                <span class="px-4 py-1.5 text-base rounded-full font-medium bg-[#0F291E] text-[#22C55E]">Activo</span>
+                <span class="status-badge status-success">Activo</span>
                 {% else %}
-                <span class="px-4 py-1.5 text-base rounded-full font-medium bg-[#1C1C1C] text-[#5C5C5C]">Finalizado</span>
+                <span class="status-badge status-neutral">Finalizado</span>
                 {% endif %}
             </td>
-            <td class="px-5 py-4">
+            <td class="table-cell">
                 <button hx-get="/contracts/{{ contract.id }}/edit"
                         hx-target="#main-content"
                         hx-swap="innerHTML"
                         hx-select="#main-content"
-                        class="text-[#989898] hover:text-[#F5A623] mr-4 transition-colors duration-150 text-xl"
+                        class="icon-action mr-4"
                         title="Editar">
                     <i class="fas fa-edit"></i>
                 </button>
@@ -40,7 +40,7 @@
                         hx-target="#contracts-table-container"
                         hx-swap="innerHTML"
                         hx-confirm="¿Eliminar este contrato?"
-                        class="text-[#989898] hover:text-[#EF4444] transition-colors duration-150 text-xl"
+                        class="icon-action icon-action-danger"
                         title="Eliminar">
                     <i class="fas fa-trash"></i>
                 </button>
@@ -55,7 +55,7 @@
                         hx-target="#main-content"
                         hx-swap="innerHTML"
                         hx-select="#main-content"
-                        class="mt-4 text-[#F5A623] hover:text-[#E0950A] text-lg font-medium transition-colors duration-150">
+                        class="empty-state-link">
                     Agregar el primero →
                 </button>
             </td>
